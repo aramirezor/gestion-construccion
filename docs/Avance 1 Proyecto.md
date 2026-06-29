@@ -168,11 +168,11 @@ Por otro lado, operaciones financieras o de aprobación requerirán conexión ob
 
 | ID | Requerimiento | Stakeholder | Por qué es un driver |
 | ----- | ----- | ----- | ----- |
-| RF-01 | Centralizar información de materiales, compras, cronogramas, tareas y costos. | Empresa Constructora. | Requiere almacenamiento y sincronización de archivos y manejo de seguridad y roles. |
+| RF-01 | Soportar la operación offline en campo y la sincronización diferida de registros y avances de obra. | Empresa Constructora. | Exige el diseño de almacenamiento local temporal y mecanismos de sincronización asíncrona. |
 | RF-02 | Permitir monitoreo de proyectos mediante indicadores y reportes. | Administradores de Proyecto. | Requiere una consolidación eficiente de información y auditoría. |
-| RF-03 | Coordinar usuarios de campo y oficina trabajando sobre la misma información. | Todos los usuarios operativos. | Requiere mecanismos para mantener consistencia y resolver conflictos. |
+| RF-03 | Garantizar la consistencia de datos y detección de conflictos entre usuarios distribuidos trabajando concurrentemente sobre la misma tarea. | Todos los usuarios operativos. | Requiere mecanismos para el manejo de concurrencia, reglas de fusión y políticas de resolución de conflictos. |
 | RF-04 | Registrar información de obra aun cuando exista conectividad limitada o intermitente. | Encargado de Obra. | Requiere almacenamiento temporal y sincronización posterior. |
-| RF-05 | Gestionar evidencia fotográfica asociada a actividades. | Arquitectos e Ingenieros. | Requiere almacenamiento y sincronización de archivos. |
+| RF-05 | Permitir el manejo eficiente, almacenamiento local temporal y transferencia tolerante a fallos de evidencia fotográfica. | Arquitectos e Ingenieros. | Condiciona fuertemente las decisiones de almacenamiento, uso de ancho de banda y colas de procesamiento de archivos pesados. |
 
 ### 3.2 Atributos de calidad prioritarios {#3.2-atributos-de-calidad-prioritarios}
 
