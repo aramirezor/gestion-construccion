@@ -1,6 +1,8 @@
 # Plataforma de Gestión de Construcción
 
-## Información General
+## Avance 1
+
+### Información General
 
 **Curso:** PSWE-04 Diseño de Sistemas de Software
 
@@ -10,7 +12,7 @@
 
 **Repositorio:** https://github.com/aramirezor/gestion-construccion
 
-## Integrantes
+### Integrantes
 
 | Integrante                 | Usuario GitHub |
 | -------------------------- | -------------- |
@@ -19,26 +21,26 @@
 | Braulio Rivera Espinoza    | @brauliore     |
 | Valery Carvajal            | @valcarvajal   |
 
-## Descripción
+### Descripción
 
 Sistema de gestión de construcción diseñado para centralizar información de obra, mejorar la comunicación entre equipos y facilitar el seguimiento de avances, materiales, compras, cronogramas y costos de los proyectos.
 
-## Estado Actual
+### Estado Actual
 
-La Propuesta del Proyecto (S03) se encuentra completada. En esta etapa se definieron el problema a resolver, el contexto del dominio, los usuarios principales, el alcance inicial del sistema y los objetivos generales de la solución.
+El primer avance del proyecto (S07) se encuentra completado. En esta etapa se profundizó y detalló lo definido en la propuesta inicial del proyecto. Además, se definieron los stakeholders, los drivers arquitectónicos, los requerimientos de calidad, las restricciones, los principios de diseño adoptados y la vista arquitectónica de contexto.
 
-Esta propuesta servirá como base para las siguientes etapas del proyecto, donde se desarrollarán los artefactos de análisis y diseño arquitectónico, incluyendo stakeholders, drivers arquitectónicos, diagramas, decisiones de arquitectura y demás entregables requeridos por el curso.
+Este avance servirá como base para las siguientes etapas del proyecto, donde se desarrollarán decisiones concretas sobre el estilo arquitectónico, contenedores, ADRs y demás entregables requeridos por el curso.
 
-## Tabla de Hitos
+### Tabla de Hitos
 
 | Hito                   | Entrega     | Estado     |
 | ---------------------- | ----------- | ---------- |
 | Propuesta del Proyecto | Semana 3    | Completado |
-| Primer Avance          | Semana 7    | Pendiente  |
+| Primer Avance          | Semana 7    | Completado |
 | Segundo Avance         | Por definir | Pendiente  |
 | Proyecto Final         | Por definir | Pendiente  |
 
-## Estructura del Repositorio
+### Estructura del Repositorio
 
 * **/docs** → Documentación del proyecto.
 * **/diagramas** → Diagramas arquitectónicos y de diseño, artefactos.
