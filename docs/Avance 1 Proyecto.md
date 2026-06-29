@@ -12,12 +12,12 @@ Maestría Profesional en Ingeniería del Software
 | Nombre del sistema | Plataforma de Gestión de Construcción |
 | :---- | :---- |
 | Grupo | Grupo 4 |
-| Integrantes | Andrés José Ramírez Ortega María José Hernández López Braulio Rivera Espinoza Valery Carvajal |
+| Integrantes | Andrés José Ramírez Ortega María José Hernández López Braulio Rivera Espinoza Valery Carvajal Oreamuno |
 | URL del repositorio | https://github.com/aramirezor/gestion-construccion.git |
 | Docente | Juan Mauricio Leandro |
 | Cuatrimestre | 2026 — II Cuatrimestre |
 | Versión del documento | 0.2 — Avance 1 |
-| Fecha de última actualización | 2026-06-21 |
+| Fecha de última actualización | 2026-06-28 |
 
 San José, Costa Rica 2026
 
