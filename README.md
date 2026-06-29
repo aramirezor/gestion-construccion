@@ -19,7 +19,7 @@
 | Andrés José Ramírez Ortega | @aramirezor    |
 | María José Hernández López | @mhernandezlo  |
 | Braulio Rivera Espinoza    | @brauliore     |
-| Valery Carvajal            | @valcarvajal   |
+| Valery Carvajal Oreamuno   | @valcarvajal   |
 
 ### Descripción
 
@@ -49,4 +49,4 @@ Este avance servirá como base para las siguientes etapas del proyecto, donde se
 ## Documentos Principales
 
 * [Propuesta del Proyecto](docs/propuesta.md)
-* [Avance 1 del Proyecto](docs/Avance 1 Proyecto.md)
+* [Avance 1 del Proyecto](docs/Avance%201%20Proyecto.md)
