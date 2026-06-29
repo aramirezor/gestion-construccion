@@ -310,4 +310,4 @@ Por otro lado, operaciones financieras o de aprobación requerirán conexión ob
 | Servicio de Correo Electrónico | Sistema externo | Recibe solicitudes de envío de notificaciones y alertas generadas por la plataforma mediante SMTP o API. |
 | Almacenamiento de Archivos | Sistema externo | Almacena y proporciona acceso a fotografías y documentos asociados a actividades y avances de obra mediante HTTPS. |
 
-![Vista de Contexto](./diagramas/diagrama_contexto.jpg)
+![Diagrama - Vista de Contexto](diagramas/diagrama_contexto.jpg)
