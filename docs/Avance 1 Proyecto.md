@@ -154,6 +154,9 @@ Por otro lado, operaciones financieras o de aprobación requerirán conexión ob
 | Encargados de Obra | Usuarios operativos que registran avances, incidencias y estado de las actividades en campo.  | Registrar avances e incidencias de manera rápida. | Conectividad limitada y facilidad de uso. |
 | Administradores de Proyecto | Responsables del control global de los proyectos, incluyendo costos, cronogramas e indicadores.  | Control presupuestario, indicadores y seguimiento global. | Precisión y consistencia de la información. |
 | Equipo de Desarrollo | Diseña, implementa y mantiene la plataforma tecnológica.  | Solución mantenible y evolutiva. | Complejidad de sincronización y consistencia de datos. |
+| Cliente / Propietario del Proyecto | Inversor. | Conocer el estado real y financiero de la obra. | Transparencia y exactitud de los reportes. |
+| Encargado de Bodega / Materiales | Controlador de inventario. | Registro exacto de entradas y salidas. | Desfase de inventario por demoras en sincronización. |
+| Proveedores de Materiales | Entidad externa. | Recepción clara de órdenes de compra. | Claridad en los tiempos de entrega. |
 
 ---
 
