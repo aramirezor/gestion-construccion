@@ -96,6 +96,10 @@ El escenario de referencia considera una empresa que administra entre 10 y 15 pr
 
 Un aspecto fundamental del dominio es la existencia de sitios de construcción con conectividad limitada o intermitente. Esta condición introduce desafíos relacionados con almacenamiento temporal de información, sincronización de datos, resolución de conflictos y mantenimiento de consistencia entre usuarios distribuidos.
 
+El problema arquitectónico central radica en permitir que usuarios en campo y oficina registren, consulten y modifiquen información bajo condiciones de conectividad desigual, manteniendo consistencia y trazabilidad. Operaciones de campo como reportar avances diarios, registrar incidencias y adjuntar fotografías deben permitirse en modo offline, almacenándose localmente como fuente de verdad temporal.
+
+Por otro lado, operaciones financieras o de aprobación requerirán conexión obligatoria. Para manejar modificaciones concurrentes (ejemplo: dos usuarios editando la misma tarea), el sistema implementará una política inicial de resolución de conflictos basada en el marcado de registros como "conflicto pendiente", requiriendo la intervención manual de un supervisor para la fusión final. Asimismo, la sincronización priorizará datos estructurados (texto, estados) antes que archivos pesados (fotografías) para asegurar la agilidad operativa.
+
 ### 1.3 Alcance del sistema {#1.3-alcance-del-sistema}
 
 **Dentro del alcance:**
