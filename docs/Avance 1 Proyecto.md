@@ -12,7 +12,7 @@ Maestría Profesional en Ingeniería del Software
 | Nombre del sistema | Plataforma de Gestión de Construcción |
 | :---- | :---- |
 | Grupo | Grupo 4 |
-| Integrantes | Andrés José Ramírez Ortega María José Hernández López Braulio Rivera Espinoza Valery Carvajal Oreamuno |
+| Integrantes |  Andrés José Ramírez Ortega<br>María José Hernández López<br>Braulio Rivera Espinoza<br>Valery Carvajal Oreamuno |
 | URL del repositorio | https://github.com/aramirezor/gestion-construccion.git |
 | Docente | Juan Mauricio Leandro |
 | Cuatrimestre | 2026 — II Cuatrimestre |
@@ -28,176 +28,192 @@ Control de Versiones
 | 0.1 | 2026-05-26 | Propuesta (S03) | Creación del documento inicial, definición del sistema, alcance, stakeholders y estructura base del documento. | Andrés José Ramírez Ortega María José Hernández López Braulio Rivera Espinoza Valery Carvajal Oreamuno |
 | 0.2 | 2026-06-21 | Avance 1 (S07) | Incorporación de drivers arquitectónicos, requerimientos funcionales clave, atributos de calidad prioritarios, restricciones, escenarios de calidad, principios de diseño y vista de contexto. | Andrés José Ramírez Ortega María José Hernández López Braulio Rivera Espinoza Valery Carvajal Oreamuno |
 | 0.3 | 2026-06-28 | Avance 1 (S07) - Correcciones | Profundización del problema arquitectónico central (operación offline, política de conflictos y priorización de sincronización); ampliación de stakeholders (Cliente, Bodega, Proveedores); ajuste técnico de drivers arquitectónicos; redefinición de escenarios de calidad con métricas verificables y adición de escenario de resiliencia para fotografías; optimización de la vista de contexto. | Andrés José Ramírez Ortega María José Hernández López Braulio Rivera Espinoza Valery Carvajal Oreamuno |
+| 0.4 | 2026-06-28 | Avance 1 (S07) - Ajustes finales | Reestructuración del documento para mantener consistencia con el alcance del avance; fortalecimiento de la lógica y coherencia entre las secciones; refinamiento de la descripción del sistema, drivers arquitectónicos, escenarios de calidad y vista de contexto; eliminación de secciones no desarrolladas y corrección de numeración, formato y redacción general. | Andrés José Ramírez Ortega María José Hernández López Braulio Rivera Espinoza Valery Carvajal Oreamuno |
 |  |  |  |  |  |
 
 # 
 
-## 
+# Documentación del Proyecto
 
-[1\. Descripción del sistema y alcance	5](#1.-descripción-del-sistema-y-alcance)
+## Tabla de Contenido
 
-[1.1 Descripción general	5](#1.1-descripción-general)
+1. Descripción del Sistema y Alcance
+   - 1.1 Descripción General
+   - 1.2 Contexto del Negocio o Dominio
+   - 1.3 Alcance del Sistema
+   - 1.4 Usuarios y Casos de Uso Principales
 
-[1.2 Contexto del negocio o dominio	5](#1.2-contexto-del-negocio-o-dominio)
+2. Stakeholders
 
-[1.3 Alcance del sistema	6](#1.3-alcance-del-sistema)
+3. Drivers Arquitectónicos
+   - 3.1 Requerimientos Funcionales Clave
+   - 3.2 Atributos de Calidad Prioritarios
+   - 3.3 Restricciones que Actúan como Drivers
 
-[1.4 Usuarios y casos de uso principales	6](#1.4-usuarios-y-casos-de-uso-principales)
+4. Desafío Arquitectónico Principal
 
-[2\. Stakeholders	8](#2.-stakeholders)
+5. Escenarios de Calidad
+6. Restricciones
 
-[3\. Drivers arquitectónicos	10](#3.-drivers-arquitectónicos)
+7. Principios de Diseño
 
-[3.1 Requerimientos funcionales clave	10](#3.1-requerimientos-funcionales-clave)
+8. Vistas Arquitectónicas
+   - 8.1  Vista de contexto
 
-[3.2 Atributos de calidad prioritarios	11](#3.2-atributos-de-calidad-prioritarios)
 
-[3.3 Restricciones que actúan como drivers	12](#3.3-restricciones-que-actúan-como-drivers)
+# 1\. Descripción del Sistema y Alcance
 
-[4\. Requerimientos de calidad — Escenarios	13](#4.-requerimientos-de-calidad-—-escenarios)
+Este documento presenta el análisis arquitectónico inicial de la **Plataforma de Gestión de Construcción**, desarrollado como parte del proyecto del curso **PSWE-04 Diseño de Sistemas de Software**.
 
-[Escenario QS-01 — Disponibilidad	13](#escenario-qs-01-—-disponibilidad)
+Su propósito es definir el contexto del sistema, los actores involucrados, el alcance, los principales requerimientos y los drivers arquitectónicos que orientarán las decisiones de diseño en las siguientes etapas del proyecto.
 
-[Escenario QS-02 — Consistencia	13](#escenario-qs-02-—-consistencia)
 
-[Escenario QS-03 — Trazabilidad	14](#escenario-qs-03-—-trazabilidad)
-
-[Escenario QS-04 — Seguridad	14](#escenario-qs-04-—-seguridad)
-
-[5\. Restricciones	16](#5.-restricciones)
-
-[6\. Principios de diseño adoptados	17](#6.-principios-de-diseño-adoptados)
-
-[7\. Vistas arquitectónicas	18](#7.-vistas-arquitectónicas)
-
-[7.1 Vista de contexto	18](#7.1-vista-de-contexto)
-
-[Figura 1 — Vista de contexto de la Plataforma de Gestión de Construcción	18](#figura-1-—-vista-de-contexto-de-la-plataforma-de-gestión-de-construcción)
-
-## 
-
-## 1\. Descripción del sistema y alcance {#1.-descripción-del-sistema-y-alcance}
-
-### 1.1 Descripción general {#1.1-descripción-general}
+## 1.1 Descripción General
 
 La Plataforma de Gestión de Construcción es un sistema diseñado para centralizar la información operativa y administrativa asociada a proyectos de construcción. El sistema permite gestionar materiales, compras, tareas, cronogramas, avances de obra, costos e indicadores de desempeño desde una única plataforma, reduciendo la dependencia de múltiples herramientas aisladas.
 
 La solución está dirigida a pequeñas y medianas empresas constructoras que administran varios proyectos simultáneamente y que actualmente enfrentan dificultades debido a la dispersión de información entre hojas de cálculo, aplicaciones de mensajería, correos electrónicos y documentos compartidos. Esta situación genera duplicidad de información, pérdida de trazabilidad, retrasos en la comunicación y dificultades para monitorear el estado real de los proyectos.
 
-El valor principal del sistema consiste en proporcionar una visión centralizada y consistente de cada proyecto, facilitando la coordinación entre personal de campo y oficina, mejorando la toma de decisiones y permitiendo un seguimiento más preciso del progreso, costos y utilización de recursos.
+El principal valor del sistema consiste en proporcionar una visión centralizada y consistente de cada proyecto, facilitando la coordinación entre el personal de campo y oficina, mejorando la toma de decisiones y permitiendo un seguimiento más preciso del progreso, los costos y la utilización de los recursos.
 
-### 1.2 Contexto del negocio o dominio {#1.2-contexto-del-negocio-o-dominio}
-
-El sistema opera dentro del dominio de gestión de proyectos de construcción. En este entorno participan arquitectos, ingenieros, encargados de obra y administradores de proyecto que requieren información actualizada para coordinar actividades, controlar recursos y monitorear el avance de las obras.
-
-Actualmente, gran parte de la información es compartida mediante fotografías, mensajería instantánea, reportes manuales y documentos distribuidos. Esta fragmentación dificulta la consulta histórica, la trazabilidad de decisiones y la consolidación de información necesaria para la gestión de proyectos.
-
-El escenario de referencia considera una empresa que administra entre 10 y 15 proyectos simultáneamente, con aproximadamente cuatro arquitectos o ingenieros supervisando múltiples obras. Existen usuarios tanto en campo como en oficina y los encargados de obra realizan actualizaciones frecuentes sobre tareas y avances.
-
-Un aspecto fundamental del dominio es la existencia de sitios de construcción con conectividad limitada o intermitente. Esta condición introduce desafíos relacionados con almacenamiento temporal de información, sincronización de datos, resolución de conflictos y mantenimiento de consistencia entre usuarios distribuidos.
-
-El problema arquitectónico central radica en permitir que usuarios en campo y oficina registren, consulten y modifiquen información bajo condiciones de conectividad desigual, manteniendo consistencia y trazabilidad. Operaciones de campo como reportar avances diarios, registrar incidencias y adjuntar fotografías deben permitirse en modo offline, almacenándose localmente como fuente de verdad temporal.
-
-Por otro lado, operaciones financieras o de aprobación requerirán conexión obligatoria. Para manejar modificaciones concurrentes (ejemplo: dos usuarios editando la misma tarea), el sistema implementará una política inicial de resolución de conflictos basada en el marcado de registros como "conflicto pendiente", requiriendo la intervención manual de un supervisor para la fusión final. Asimismo, la sincronización priorizará datos estructurados (texto, estados) antes que archivos pesados (fotografías) para asegurar la agilidad operativa.
-
-### 1.3 Alcance del sistema {#1.3-alcance-del-sistema}
-
-**Dentro del alcance:**
-
-* Registro y gestión de inventario de materiales.  
-* Control de entradas, salidas y consumo de materiales.  
-* Generación y seguimiento de solicitudes de compra.  
-* Registro y seguimiento de cotizaciones y órdenes de compra.  
-* Administración de proveedores.  
-* Registro de avances diarios o semanales de obra.  
-* Asociación de fotografías a actividades específicas.  
-* Gestión y seguimiento de tareas.  
-* Asignación de responsables.  
-* Gestión de cronogramas e hitos.  
-* Monitoreo de costos y presupuesto.  
-* Generación de reportes personalizados.  
-* Visualización de indicadores de desempeño.  
-* Centralización de información de proyectos.  
-* Soporte para operación en entornos con conectividad limitada.
-
-**Fuera del alcance:**
-
-* Gestión de planillas y recursos humanos.  
-* Modelado BIM.  
-* Diseño o edición de planos.  
-* Cálculos estructurales.  
-* Gestión de licitaciones.  
-* Facturación electrónica.  
-* Integraciones con sistemas ERP externos.  
-* Control de maquinaria pesada.  
-* Gestión documental avanzada de planos técnicos.
+Además, la plataforma busca permitir que usuarios ubicados en diferentes entornos de trabajo colaboren sobre la misma información, incluso cuando existan condiciones de conectividad limitada o intermitente.
 
 
-### 1.4 Usuarios y casos de uso principales {#1.4-usuarios-y-casos-de-uso-principales}
+
+## 1.2 Contexto del Negocio o Dominio
+
+El sistema opera dentro del dominio de la gestión de proyectos de construcción. En este entorno participan arquitectos, ingenieros, encargados de obra, responsables de compras, personal de bodega y administradores de proyecto, quienes requieren información actualizada para coordinar actividades, controlar recursos y monitorear el avance de las obras.
+
+Actualmente, gran parte de la información es compartida mediante fotografías, mensajería instantánea, reportes manuales y documentos distribuidos. Esta fragmentación dificulta la consulta histórica, la trazabilidad de las decisiones y la consolidación de la información necesaria para la gestión de los proyectos.
+
+El escenario de referencia considera una empresa que administra entre 10 y 15 proyectos simultáneamente, con aproximadamente cuatro arquitectos o ingenieros supervisando múltiples obras. Existen usuarios tanto en campo como en oficina, y los encargados de obra realizan actualizaciones frecuentes sobre tareas, avances y consumo de materiales.
+
+Un aspecto fundamental del dominio es la existencia de sitios de construcción con conectividad limitada o intermitente. Esta condición introduce desafíos relacionados con el registro oportuno de la información y la coordinación entre usuarios distribuidos, aspectos que se desarrollan con mayor detalle en el apartado **4. Desafío Arquitectónico Principal**.
+
+
+
+## 1.3 Alcance del Sistema
+
+### Dentro del alcance
+
+- Registro y gestión de inventario de materiales.
+- Control de entradas, salidas y consumo de materiales.
+- Generación y seguimiento de solicitudes de compra.
+- Registro y seguimiento de cotizaciones y órdenes de compra.
+- Administración de proveedores.
+- Registro de avances diarios o semanales de obra.
+- Asociación de fotografías a actividades específicas.
+- Gestión y seguimiento de tareas.
+- Asignación de responsables.
+- Gestión de cronogramas e hitos.
+- Monitoreo de costos y presupuesto.
+- Generación de reportes personalizados.
+- Visualización de indicadores de desempeño.
+- Centralización de la información de los proyectos.
+- Soporte para operación en entornos con conectividad limitada.
+
+### Fuera del alcance
+
+- Gestión de planillas y recursos humanos.
+- Modelado BIM.
+- Diseño o edición de planos.
+- Cálculos estructurales.
+- Gestión de licitaciones.
+- Facturación electrónica.
+- Integraciones con sistemas ERP externos.
+- Control de maquinaria pesada.
+- Gestión documental avanzada de planos técnicos.
+
+
+
+## 1.4 Usuarios y Casos de Uso Principales
 
 | Tipo de usuario | Casos de uso principales |
 | ----- | ----- |
-| Arquitecto o Ingeniero Responsable | CU1: Registrar avances de obra. CU2: Consultar cronogramas. CU3: Supervisar tareas. CU4: Adjuntar evidencia fotográfica. CU5: Coordinar actividades entre participantes. |
-| Encargado de Obra | CU1: Reportar avances diarios. CU2: Actualizar estado de tareas. CU3: Registrar incidencias. CU4: Consultar actividades asignadas. CU5: Solicitar materiales o compras. |
-| Administrador de Proyecto | CU1: Monitorear costos y presupuesto. CU2: Analizar indicadores de desempeño. CU3: Gestionar cronogramas. CU4: Supervisar múltiples proyectos. CU5: Detectar desviaciones y sobrecostos. |
+| Arquitectos e Ingenieros | CU1: Registrar avances de obra.<br>CU2: Consultar cronogramas.<br>CU3: Supervisar tareas.<br>CU4: Adjuntar evidencia fotográfica.<br>CU5: Coordinar actividades entre participantes. |
+| Encargados de Obra | CU1: Reportar avances diarios.<br>CU2: Actualizar estado de tareas.<br>CU3: Registrar incidencias.<br>CU4: Consultar actividades asignadas.<br>CU5: Solicitar materiales o compras. |
+| Administradores de Proyecto | CU1: Monitorear costos y presupuesto.<br>CU2: Analizar indicadores de desempeño.<br>CU3: Gestionar cronogramas.<br>CU4: Supervisar múltiples proyectos.<br>CU5: Detectar desviaciones y sobrecostos. |
 
----
 
-## 
-
-## 2\. Stakeholders {#2.-stakeholders}
+## 2\. Stakeholders
 
 | Stakeholder | Rol | Intereses principales | Preocupaciones o restricciones |
 | ----- | ----- | ----- | ----- |
-| Empresa Constructora | Propietario del negocio y patrocinador del sistema. Define necesidades, objetivos y políticas de operación.  | Centralización de información, trazabilidad, monitoreo y control. | Duplicidad de datos, falta de visibilidad y retrasos operativos. |
-| Arquitectos e Ingenieros | Supervisores técnicos responsables de la planificación, coordinación y seguimiento de las obras.  | Acceso a información actualizada y seguimiento técnico. | Disponibilidad de datos y coordinación entre equipos. |
-| Encargados de Obra | Usuarios operativos que registran avances, incidencias y estado de las actividades en campo.  | Registrar avances e incidencias de manera rápida. | Conectividad limitada y facilidad de uso. |
-| Administradores de Proyecto | Responsables del control global de los proyectos, incluyendo costos, cronogramas e indicadores.  | Control presupuestario, indicadores y seguimiento global. | Precisión y consistencia de la información. |
-| Equipo de Desarrollo | Diseña, implementa y mantiene la plataforma tecnológica.  | Solución mantenible y evolutiva. | Complejidad de sincronización y consistencia de datos. |
-| Cliente / Propietario del Proyecto | Inversor. | Conocer el estado real y financiero de la obra. | Transparencia y exactitud de los reportes. |
-| Encargado de Bodega / Materiales | Controlador de inventario. | Registro exacto de entradas y salidas. | Desfase de inventario por demoras en sincronización. |
-| Proveedores de Materiales | Entidad externa. | Recepción clara de órdenes de compra. | Claridad en los tiempos de entrega. |
+| Empresa Constructora | Propietario del negocio y patrocinador del sistema. Define necesidades, objetivos y políticas de operación. | Centralización de información, trazabilidad, monitoreo y control de los proyectos. | Duplicidad de datos, falta de visibilidad y retrasos operativos. |
+| Arquitectos e Ingenieros | Supervisores técnicos responsables de la planificación, coordinación y seguimiento de las obras. | Acceso a información actualizada, registro de avances y coordinación entre equipos. | Disponibilidad de datos, trabajo en campo y conectividad limitada. |
+| Encargados de Obra | Usuarios operativos que registran avances, incidencias y estado de las actividades en campo. | Registrar avances e incidencias de forma rápida y consultar tareas asignadas. | Conectividad intermitente, facilidad de uso y sincronización de la información. |
+| Administradores de Proyecto | Responsables del control global de los proyectos, incluyendo costos, cronogramas e indicadores. | Control presupuestario, seguimiento del progreso y toma de decisiones basada en información confiable. | Precisión, consistencia y disponibilidad de la información consolidada. |
+| Encargado de Compras | Responsable de gestionar solicitudes, cotizaciones y órdenes de compra para abastecer los proyectos. | Dar seguimiento a las compras y garantizar el suministro oportuno de materiales. | Retrasos en el abastecimiento e información desactualizada sobre requerimientos. |
+| Encargado de Bodega / Materiales | Responsable del inventario y distribución de materiales para las obras. | Registro exacto de entradas, salidas y consumo de materiales. | Diferencias de inventario ocasionadas por demoras en la sincronización o registros incompletos. |
+| Proveedores de Materiales | Empresas externas encargadas del suministro de materiales y servicios. | Recibir solicitudes claras y oportunas, así como conocer el estado de las órdenes de compra. | Cambios de última hora, información incompleta y tiempos de entrega. |
+| Cliente / Propietario del Proyecto | Persona o empresa que contrata la construcción y recibe el resultado final. | Conocer el estado real del proyecto, el avance de la obra y el uso del presupuesto. | Transparencia, cumplimiento de plazos y exactitud de los reportes. |
+| Equipo de Desarrollo | Diseña, implementa y mantiene la plataforma tecnológica. | Construir una solución mantenible, escalable y alineada con las necesidades del negocio. | Complejidad de sincronización de datos, operación offline y evolución futura del sistema. |
 
----
 
-## 
 
-## 3\. Drivers arquitectónicos {#3.-drivers-arquitectónicos}
+## 3\. Drivers arquitectónicos
 
-### 3.1 Requerimientos funcionales clave {#3.1-requerimientos-funcionales-clave}
+### 3.1 Requerimientos funcionales clave
 
-| ID | Requerimiento | Stakeholder | Por qué es un driver |
+| ID | Requerimiento | Stakeholder | ¿Por qué es un driver arquitectónico? |
 | ----- | ----- | ----- | ----- |
-| RF-01 | Soportar la operación offline en campo y la sincronización diferida de registros y avances de obra. | Empresa Constructora. | Exige el diseño de almacenamiento local temporal y mecanismos de sincronización asíncrona. |
-| RF-02 | Permitir monitoreo de proyectos mediante indicadores y reportes. | Administradores de Proyecto. | Requiere una consolidación eficiente de información y auditoría. |
-| RF-03 | Garantizar la consistencia de datos y detección de conflictos entre usuarios distribuidos trabajando concurrentemente sobre la misma tarea. | Todos los usuarios operativos. | Requiere mecanismos para el manejo de concurrencia, reglas de fusión y políticas de resolución de conflictos. |
-| RF-04 | Registrar información de obra aun cuando exista conectividad limitada o intermitente. | Encargado de Obra. | Requiere almacenamiento temporal y sincronización posterior. |
-| RF-05 | Permitir el manejo eficiente, almacenamiento local temporal y transferencia tolerante a fallos de evidencia fotográfica. | Arquitectos e Ingenieros. | Condiciona fuertemente las decisiones de almacenamiento, uso de ancho de banda y colas de procesamiento de archivos pesados. |
+| RF-01 | Centralizar la información de materiales, compras, cronogramas, tareas, costos y avances de todos los proyectos en una única plataforma. | Empresa Constructora | Requiere definir una arquitectura que garantice la consistencia, disponibilidad y organización de la información compartida. |
+| RF-02 | Permitir que usuarios de campo registren información aun cuando exista conectividad limitada o intermitente. | Encargados de Obra, Arquitectos e Ingenieros | Obliga a implementar mecanismos de operación offline, almacenamiento temporal y sincronización posterior. |
+| RF-03 | Sincronizar la información registrada por usuarios de campo y oficina manteniendo la consistencia de los datos. | Todos los usuarios operativos | Requiere definir estrategias de sincronización, resolución de conflictos y control de versiones de la información. |
+| RF-04 | Gestionar evidencia fotográfica asociada a actividades y avances de obra. | Arquitectos e Ingenieros | Requiere decisiones sobre almacenamiento, transferencia y sincronización eficiente de archivos multimedia. |
+| RF-05 | Controlar el acceso a la información según el rol de cada usuario. | Empresa Constructora, Administradores de Proyecto | Obliga a definir mecanismos de autenticación, autorización y control de permisos. |
+| RF-06 | Proporcionar reportes e indicadores actualizados para apoyar la toma de decisiones. | Administradores de Proyecto | Requiere consolidar información proveniente de múltiples módulos y garantizar la disponibilidad de datos confiables. |
 
-### 3.2 Atributos de calidad prioritarios {#3.2-atributos-de-calidad-prioritarios}
+### 3.2 Atributos de calidad prioritarios 
 
 | ID | Atributo | Importancia | Stakeholder | Justificación |
 | ----- | ----- | ----- | ----- | ----- |
-| QA-01 | Disponibilidad | Alta | Encargados de Obra, Arquitectos e Ingenieros  | Los usuarios de obra deben poder continuar registrando información incluso cuando la conectividad sea limitada. |
-| QA-02 | Consistencia  | Alta | Administradores de Proyecto, Empresa Constructora  | Múltiples usuarios pueden modificar información relacionada con el mismo proyecto. |
-| QA-03 | Trazabilidad  | Alta | Empresa Constructora, Administradores de Proyecto  | El sistema busca eliminar la pérdida de información y mantener historial de actividades y decisiones. |
-| QA-04 | Mantenibilidad  | Media | Equipo de Desarrollo  | La plataforma puede evolucionar incorporando nuevas funcionalidades en el futuro. |
-| QA-05 | Seguridad  | Alta | Todos los stakeholders  | La información de proyectos debe estar protegida y accesible según responsabilidades de cada usuario. |
+| QA-01 | Disponibilidad | Alta | Encargados de Obra, Arquitectos e Ingenieros | Los usuarios deben poder consultar y registrar información incluso cuando la conectividad sea limitada o intermitente. |
+| QA-02 | Consistencia | Alta | Empresa Constructora, Administradores de Proyecto | La información debe mantenerse consistente entre usuarios de campo y oficina, aun cuando existan sincronizaciones posteriores. |
+| QA-03 | Trazabilidad | Alta | Empresa Constructora, Administradores de Proyecto | El sistema debe conservar un historial de cambios, avances y decisiones para facilitar auditorías y seguimiento de proyectos. |
+| QA-04 | Seguridad | Alta | Todos los stakeholders | La información debe estar protegida mediante autenticación, autorización y control de acceso basado en roles. |
+| QA-05 | Mantenibilidad | Media | Equipo de Desarrollo | La solución debe facilitar la incorporación de nuevas funcionalidades y el mantenimiento del sistema sin afectar los componentes existentes. |
+| QA-06 | Escalabilidad | Alta | Empresa Constructora | La plataforma debe soportar el crecimiento en el número de proyectos, usuarios y registros sin degradar significativamente su rendimiento. |
 
-### 3.3 Restricciones que actúan como drivers {#3.3-restricciones-que-actúan-como-drivers}
+### 3.3 Restricciones que actúan como drivers 
+
+Las siguientes restricciones no son negociables y condicionan directamente las decisiones arquitectónicas del sistema.
 
 | ID | Restricción | Tipo | Impacto en el diseño |
 | ----- | ----- | ----- | ----- |
-| REST-01 | Administración simultánea de entre 10 y 15 proyectos. | Negocio | Requiere organización adecuada de datos y capacidad para gestionar múltiples contextos de proyecto. |
-| REST-02 | Existencia de usuarios distribuidos entre campo y oficina. | Negocio | Requiere coordinación de cambios y consistencia de información. |
-| REST-03 | Conectividad limitada o intermitente en sitios de construcción. | Técnica | Obliga a diseñar mecanismos de operación offline, almacenamiento temporal y sincronización. |
-| REST-04 | Uso frecuente de fotografías como evidencia de avance. | Técnica | Condiciona decisiones relacionadas con almacenamiento, transferencia y sincronización de archivos. |
+| REST-01 | La empresa administra simultáneamente entre 10 y 15 proyectos de construcción. | Negocio | Requiere una arquitectura que permita organizar y gestionar múltiples proyectos sin afectar el rendimiento ni la disponibilidad de la información. |
+| REST-02 | Existen usuarios distribuidos entre oficinas y distintos sitios de construcción trabajando sobre la misma información. | Negocio | Obliga a definir mecanismos de sincronización, consistencia de datos y resolución de conflictos cuando varios usuarios realizan cambios concurrentes. |
+| REST-03 | La conectividad a Internet en los sitios de construcción puede ser limitada o intermitente. | Técnica | Requiere implementar capacidades de operación offline, almacenamiento temporal y sincronización automática cuando la conexión sea restablecida. |
+| REST-04 | El sistema debe almacenar fotografías y evidencia visual del avance de las obras. | Técnica | Condiciona las decisiones relacionadas con almacenamiento, compresión, transferencia y sincronización eficiente de archivos multimedia. |
+| REST-05 | La información debe estar protegida de acuerdo con el rol de cada usuario. | Seguridad | Obliga a implementar mecanismos de autenticación, autorización y control de acceso basado en roles. |
+| REST-06 | El sistema será utilizado tanto desde dispositivos móviles en campo como desde equipos de escritorio en oficina. | Técnica | Requiere una arquitectura que facilite el acceso desde diferentes plataformas y garantice una experiencia de uso consistente entre clientes. |
 
-## 
 
-## 4\. Requerimientos de calidad — Escenarios {#4.-requerimientos-de-calidad-—-escenarios}
 
-### Escenario QS-01 — Disponibilidad {#escenario-qs-01-—-disponibilidad}
+## 4\. Problema Arquitectónico Central
+
+El principal desafío arquitectónico de la Plataforma de Gestión de Construcción consiste en permitir que usuarios de campo y oficina trabajen sobre la misma información, aun cuando existan condiciones de conectividad limitada o intermitente.
+
+Los encargados de obra, arquitectos e ingenieros necesitan registrar avances, incidencias, fotografías y consumo de materiales directamente desde el sitio de construcción. Sin embargo, estos registros no siempre pueden enviarse inmediatamente al sistema central debido a la disponibilidad variable de la red.
+
+Como consecuencia, la arquitectura del sistema debe permitir el almacenamiento temporal de la información, su sincronización cuando exista conectividad y la resolución de posibles conflictos cuando múltiples usuarios modifiquen los mismos datos.
+
+Este problema impacta directamente decisiones relacionadas con:
+
+- Operación offline.
+- Sincronización de datos.
+- Resolución de conflictos.
+- Consistencia de la información.
+- Manejo eficiente de archivos multimedia.
+- Trazabilidad de cambios realizados por los usuarios.
+
+La resolución de este desafío constituye el principal eje arquitectónico del proyecto y orientará las decisiones de diseño en las siguientes etapas del desarrollo.
+
+ 
+
+## 5\. Requerimientos de calidad — Escenarios 
+
+### Escenario QS-01 — Disponibilidad 
 
 | Elemento | Descripción |
 | ----- | ----- |
@@ -206,13 +222,13 @@ Por otro lado, operaciones financieras o de aprobación requerirán conexión ob
 | **Entorno** | Sitio de construcción con conectividad limitada o intermitente |
 | **Artefacto** | Aplicación móvil y almacenamiento local |
 | **Respuesta** | El sistema almacena temporalmente la información y permite continuar trabajando normalmente |
-| **Medida de respuesta** | [cite_start]El 100% de los registros offline incluidos en la suite de pruebas se almacenan localmente y quedan en cola de sincronización [cite: 94] |
+| **Medida de respuesta** | El 100% de los registros offline incluidos en la suite de pruebas se almacenan localmente y quedan en cola de sincronización|
 
 *Tensión con:* QS-02 (Consistencia), ya que permitir trabajo offline puede generar versiones divergentes de los datos.
 
----
 
-### Escenario QS-02 — Consistencia {#escenario-qs-02-—-consistencia}
+
+### Escenario QS-02 — Consistencia 
 
 | Elemento | Descripción |
 | ----- | ----- |
@@ -220,14 +236,14 @@ Por otro lado, operaciones financieras o de aprobación requerirán conexión ob
 | **Estímulo** | Dos usuarios modifican simultáneamente el estado de una misma tarea |
 | **Entorno** | Operación normal con usuarios distribuidos entre campo y oficina |
 | **Artefacto** | Servicio de gestión de tareas y sincronización |
-| **Respuesta** | [cite_start]El sistema detecta el conflicto, marca el registro como "conflicto pendiente" (resolución manual) y conserva la trazabilidad [cite: 95] |
-| **Medida de respuesta** | [cite_start]Los conflictos definidos en los casos de prueba son detectados y marcados como pendientes [cite: 95] |
+| **Respuesta** | El sistema detecta el conflicto, marca el registro como "conflicto pendiente" (resolución manual) y conserva la trazabilidad |
+| **Medida de respuesta** | Los conflictos definidos en los casos de prueba son detectados y marcados como pendientes |
 
 *Tensión con:* QS-01 (Disponibilidad), porque la sincronización y resolución de conflictos puede retrasar la disponibilidad inmediata de los cambios.
 
----
 
-### Escenario QS-03 — Trazabilidad {#escenario-qs-03-—-trazabilidad}
+
+### Escenario QS-03 — Trazabilidad
 
 | Elemento | Descripción |
 | ----- | ----- |
@@ -240,9 +256,9 @@ Por otro lado, operaciones financieras o de aprobación requerirán conexión ob
 
 *Tensión con:* QS-04 (Rendimiento/Mantenibilidad), debido al almacenamiento adicional requerido para auditoría.
 
----
 
-### Escenario QS-04 — Seguridad {#escenario-qs-04-—-seguridad}
+
+### Escenario QS-04 — Seguridad
 
 | Elemento | Descripción |
 | ----- | ----- |
@@ -251,28 +267,26 @@ Por otro lado, operaciones financieras o de aprobación requerirán conexión ob
 | **Entorno** | Operación normal |
 | **Artefacto** | Servicio de autenticación y autorización |
 | **Respuesta** | El sistema rechaza el acceso, registra el intento y notifica el evento para auditoría |
-| **Medida de respuesta** | [cite_start]Todo acceso a proyectos fuera del rol asignado en la matriz de permisos es rechazado y auditado [cite: 96] |
+| **Medida de respuesta** | Todo acceso a proyectos fuera del rol asignado en la matriz de permisos es rechazado y auditado |
 
 *Tensión con:* QS-01 (Disponibilidad), porque los controles de seguridad agregan validaciones adicionales antes de permitir el acceso.
 
----
 
-### Escenario QS-05 — Rendimiento / Resiliencia (Fotografías)
+
+### Escenario QS-05 — Resiliencia en la sincronización de fotografías
 
 | Elemento | Descripción |
 | ----- | ----- |
-| **Fuente del estímulo** | [cite_start]Encargado de Obra [cite: 97] |
-| **Estímulo** | [cite_start]Intenta sincronizar fotografías pesadas tras recuperar conectividad intermitente [cite: 97] |
-| **Entorno** | [cite_start]Operación de campo pasando de offline a online [cite: 97] |
-| **Artefacto** | [cite_start]Módulo de sincronización de archivos [cite: 97] |
-| **Respuesta** | [cite_start]El sistema transfiere los archivos en segundo plano sin bloquear la interfaz, reanudando descargas fallidas desde el punto de interrupción [cite: 97] |
-| **Medida de respuesta** | [cite_start]La subida de fotografías simuladas bajo red inestable se completa exitosamente tras interrupciones, sin corromper el archivo [cite: 97] |
+| **Fuente del estímulo** | Encargado de Obra |
+| **Estímulo** | Intenta sincronizar fotografías pesadas tras recuperar conectividad intermitente|
+| **Entorno** | Operación de campo pasando de offline a online |
+| **Artefacto** | Módulo de sincronización de archivos |
+| **Respuesta** | El sistema transfiere los archivos en segundo plano sin bloquear la interfaz, reanudando descargas fallidas desde el punto de interrupción  |
+| **Medida de respuesta** | La subida de fotografías simuladas bajo red inestable se completa exitosamente tras interrupciones, sin corromper el archivo |
 
----
 
-## 
 
-## 5\. Restricciones {#5.-restricciones}
+## 6\. Restricciones 
 
 | ID | Restricción | Tipo | Origen | Impacto en el diseño |
 | ----- | ----- | ----- | ----- | ----- |
@@ -283,11 +297,8 @@ Por otro lado, operaciones financieras o de aprobación requerirán conexión ob
 | REST-05 | El sistema debe cumplir con la Ley N.º 8968 de Protección de la Persona frente al Tratamiento de sus Datos Personales de Costa Rica. | Regulatoria | Gobierno de Costa Rica | Requiere controles de acceso, auditoría y protección de datos. |
 | REST-06 | La solución debe ser accesible mediante navegador web y dispositivos móviles. | Negocio | Empresa Constructora | Condiciona la arquitectura hacia clientes multiplataforma. |
 
----
 
-## 
-
-## 6\. Principios de diseño adoptados {#6.-principios-de-diseño-adoptados}
+## 7\. Principios de diseño adoptados
 
 | Principio | Justificación para este sistema |
 | ----- | ----- |
@@ -300,27 +311,20 @@ Por otro lado, operaciones financieras o de aprobación requerirán conexión ob
 | Alta cohesión y bajo acoplamiento | Facilita el mantenimiento de módulos como inventario, compras, costos y cronogramas sin afectar el resto del sistema. |
 | Diseño orientado a la resiliencia | Es fundamental debido a los escenarios de conectividad intermitente presentes en las obras de construcción. |
 
-### 
 
-## 7\. Vistas arquitectónicas {#7.-vistas-arquitectónicas}
+## 8. Vistas arquitectónicas
 
-### 7.1 Vista de contexto {#7.1-vista-de-contexto}
+### 8.1 Vista de contexto
 
-**Figura 1**
+**Figura 1. Vista de contexto de la Plataforma de Gestión de Construcción**
 
-### **![][image1]**
-
-### 
-
-### **Figura 1 — Vista de contexto de la Plataforma de Gestión de Construcción** {#figura-1-—-vista-de-contexto-de-la-plataforma-de-gestión-de-construcción}
+![Diagrama - Vista de Contexto](../diagramas/diagrama_contexto.jpg)
 
 | Elemento | Tipo | Descripción de la relación |
 | ----- | ----- | ----- |
 | Plataforma de Gestión de Construcción | Sistema principal | Centraliza la información relacionada con materiales, compras, cronogramas, tareas, costos y avances de obra. |
-| Arquitecto / Ingeniero Responsable | Persona / Rol | Consulta cronogramas, supervisa tareas, registra avances y adjunta evidencia fotográfica al sistema. |
+| Arquitectos e Ingenieros | Persona / Rol | Consultan cronogramas, supervisan tareas, registran avances y adjuntan evidencia fotográfica al sistema. |
 | Encargado de Obra | Persona / Rol | Reporta avances diarios, incidencias, actualiza tareas y solicita materiales desde los sitios de construcción. |
 | Administrador de Proyecto | Persona / Rol | Monitorea costos, indicadores de desempeño, cronogramas y el estado general de múltiples proyectos. |
 | Servicio de Correo Electrónico | Sistema externo | Recibe solicitudes de envío de notificaciones y alertas generadas por la plataforma mediante SMTP o API. |
 | Almacenamiento de Archivos | Sistema externo | Almacena y proporciona acceso a fotografías y documentos asociados a actividades y avances de obra mediante HTTPS. |
-
-![Diagrama - Vista de Contexto](../diagramas/diagrama_contexto.jpg)
