@@ -16,7 +16,7 @@ Maestría Profesional en Ingeniería del Software
 | URL del repositorio | https://github.com/aramirezor/gestion-construccion.git |
 | Docente | Juan Mauricio Leandro |
 | Cuatrimestre | 2026 — II Cuatrimestre |
-| Versión del documento | 0.2 — Avance 1 |
+| Versión del documento | 0.4 — Avance 1 |
 | Fecha de última actualización | 2026-06-28 |
 
 San José, Costa Rica 2026
