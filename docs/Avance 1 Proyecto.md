@@ -206,7 +206,7 @@ Por otro lado, operaciones financieras o de aprobación requerirán conexión ob
 | **Entorno** | Sitio de construcción con conectividad limitada o intermitente |
 | **Artefacto** | Aplicación móvil y almacenamiento local |
 | **Respuesta** | El sistema almacena temporalmente la información y permite continuar trabajando normalmente |
-| **Medida de respuesta** | El 100% de los registros realizados offline se almacenan localmente y quedan disponibles para sincronización posterior |
+| **Medida de respuesta** | [cite_start]El 100% de los registros offline incluidos en la suite de pruebas se almacenan localmente y quedan en cola de sincronización [cite: 94] |
 
 *Tensión con:* QS-02 (Consistencia), ya que permitir trabajo offline puede generar versiones divergentes de los datos.
 
@@ -220,8 +220,8 @@ Por otro lado, operaciones financieras o de aprobación requerirán conexión ob
 | **Estímulo** | Dos usuarios modifican simultáneamente el estado de una misma tarea |
 | **Entorno** | Operación normal con usuarios distribuidos entre campo y oficina |
 | **Artefacto** | Servicio de gestión de tareas y sincronización |
-| **Respuesta** | El sistema detecta el conflicto, aplica reglas de resolución y conserva trazabilidad de los cambios |
-| **Medida de respuesta** | El 100% de los conflictos son detectados y resueltos sin pérdida de información |
+| **Respuesta** | [cite_start]El sistema detecta el conflicto, marca el registro como "conflicto pendiente" (resolución manual) y conserva la trazabilidad [cite: 95] |
+| **Medida de respuesta** | [cite_start]Los conflictos definidos en los casos de prueba son detectados y marcados como pendientes [cite: 95] |
 
 *Tensión con:* QS-01 (Disponibilidad), porque la sincronización y resolución de conflictos puede retrasar la disponibilidad inmediata de los cambios.
 
@@ -251,9 +251,22 @@ Por otro lado, operaciones financieras o de aprobación requerirán conexión ob
 | **Entorno** | Operación normal |
 | **Artefacto** | Servicio de autenticación y autorización |
 | **Respuesta** | El sistema rechaza el acceso, registra el intento y notifica el evento para auditoría |
-| **Medida de respuesta** | El 100% de los accesos no autorizados son bloqueados y registrados en el sistema de auditoría |
+| **Medida de respuesta** | [cite_start]Todo acceso a proyectos fuera del rol asignado en la matriz de permisos es rechazado y auditado [cite: 96] |
 
 *Tensión con:* QS-01 (Disponibilidad), porque los controles de seguridad agregan validaciones adicionales antes de permitir el acceso.
+
+---
+
+### Escenario QS-05 — Rendimiento / Resiliencia (Fotografías)
+
+| Elemento | Descripción |
+| ----- | ----- |
+| **Fuente del estímulo** | [cite_start]Encargado de Obra [cite: 97] |
+| **Estímulo** | [cite_start]Intenta sincronizar fotografías pesadas tras recuperar conectividad intermitente [cite: 97] |
+| **Entorno** | [cite_start]Operación de campo pasando de offline a online [cite: 97] |
+| **Artefacto** | [cite_start]Módulo de sincronización de archivos [cite: 97] |
+| **Respuesta** | [cite_start]El sistema transfiere los archivos en segundo plano sin bloquear la interfaz, reanudando descargas fallidas desde el punto de interrupción [cite: 97] |
+| **Medida de respuesta** | [cite_start]La subida de fotografías simuladas bajo red inestable se completa exitosamente tras interrupciones, sin corromper el archivo [cite: 97] |
 
 ---
 
