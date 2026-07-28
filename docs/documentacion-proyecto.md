@@ -12,11 +12,11 @@ Maestría Profesional en Ingeniería del Software
 | Nombre del sistema | Plataforma de Gestión de Construcción |
 | :---- | :---- |
 | Grupo | Grupo 4 |
-| Integrantes |  Andrés José Ramírez Ortega<br>María José Hernández López<br>Braulio Rivera Espinoza<br>Valery Carvajal Oreamuno |
+| Integrantes |  Andrés José Ramírez Ortega<br>Braulio Rivera Espinoza<br>Valery Carvajal Oreamuno |
 | URL del repositorio | https://github.com/aramirezor/gestion-construccion.git |
 | Docente | Juan Mauricio Leandro |
 | Cuatrimestre | 2026 — II Cuatrimestre |
-| Versión del documento | 0.4 — Avance 1 |
+| Versión del documento | 0.5 — Avance 2 |
 | Fecha de última actualización | 2026-06-28 |
 
 San José, Costa Rica 2026
@@ -29,6 +29,7 @@ Control de Versiones
 | 0.2 | 2026-06-21 | Avance 1 (S07) | Incorporación de drivers arquitectónicos, requerimientos funcionales clave, atributos de calidad prioritarios, restricciones, escenarios de calidad, principios de diseño y vista de contexto. | Andrés José Ramírez Ortega María José Hernández López Braulio Rivera Espinoza Valery Carvajal Oreamuno |
 | 0.3 | 2026-06-28 | Avance 1 (S07) - Correcciones | Profundización del problema arquitectónico central (operación offline, política de conflictos y priorización de sincronización); ampliación de stakeholders (Cliente, Bodega, Proveedores); ajuste técnico de drivers arquitectónicos; redefinición de escenarios de calidad con métricas verificables y adición de escenario de resiliencia para fotografías; optimización de la vista de contexto. | Andrés José Ramírez Ortega María José Hernández López Braulio Rivera Espinoza Valery Carvajal Oreamuno |
 | 0.4 | 2026-06-28 | Avance 1 (S07) - Ajustes finales | Reestructuración del documento para mantener consistencia con el alcance del avance; fortalecimiento de la lógica y coherencia entre las secciones; refinamiento de la descripción del sistema, drivers arquitectónicos, escenarios de calidad y vista de contexto; eliminación de secciones no desarrolladas y corrección de numeración, formato y redacción general. | Andrés José Ramírez Ortega María José Hernández López Braulio Rivera Espinoza Valery Carvajal Oreamuno |
+| 0.5 | 2026-07-26 | Avance 2 (S11) | Incorporación de la vista de estructura interna y la vista de comportamiento; definición del estilo arquitectónico y análisis de sus trade-offs; documentación del registro de decisiones arquitectónicas (ADR); revisión y actualización general del documento para mantener la consistencia entre las vistas, los escenarios de calidad y las decisiones de diseño. | Andrés José Ramírez Ortega María José Hernández López Braulio Rivera Espinoza Valery Carvajal Oreamuno |
 |  |  |  |  |  |
 
 # 
@@ -53,12 +54,31 @@ Control de Versiones
 4. Desafío Arquitectónico Principal
 
 5. Escenarios de Calidad
+
 6. Restricciones
 
 7. Principios de Diseño
 
 8. Vistas Arquitectónicas
-   - 8.1  Vista de contexto
+   - 8.1 Vista de contexto
+   - 8.2 Vista de estructura interna
+   - 8.3 Vista de comportamiento
+      - 8.3.1 Registro de avance de obra
+      - 8.3.2 Sincronización de información
+
+9. Estilo Arquitectónico
+   - 9.1 Estilo adoptado
+   - 9.2 Alternativas consideradas y rechazadas
+   - 9.3 Análisis de trade-offs del estilo elegido
+
+10. Registro de Decisiones Arquitectónicas (ADR)
+   - 10.1 ADR-001 – Adopción de una arquitectura monolítica modular
+   - 10.2 ADR-002 – Uso de API REST como mecanismo de comunicación entre clientes y backend
+   - 10.3 ADR-003 – Selección de PostgreSQL como motor de base de datos
+   - 10.4 ADR-004 – Uso de un servicio de almacenamiento de objetos para evidencias fotográficas
+   - 10.5 ADR-005 – Soporte para operación offline mediante sincronización diferida
+   - 10.6 ADR-006 – Autenticación basada en JWT y control de acceso por roles
+
 
 
 # 1\. Descripción del Sistema y Alcance
@@ -312,7 +332,7 @@ La resolución de este desafío constituye el principal eje arquitectónico del 
 | Diseño orientado a la resiliencia | Es fundamental debido a los escenarios de conectividad intermitente presentes en las obras de construcción. |
 
 
-## 8. Vistas arquitectónicas
+## 8\. Vistas arquitectónicas
 
 ### 8.1 Vista de contexto
 
@@ -328,3 +348,119 @@ La resolución de este desafío constituye el principal eje arquitectónico del 
 | Administrador de Proyecto | Persona / Rol | Monitorea costos, indicadores de desempeño, cronogramas y el estado general de múltiples proyectos. |
 | Servicio de Correo Electrónico | Sistema externo | Recibe solicitudes de envío de notificaciones y alertas generadas por la plataforma mediante SMTP o API. |
 | Almacenamiento de Archivos | Sistema externo | Almacena y proporciona acceso a fotografías y documentos asociados a actividades y avances de obra mediante HTTPS. |
+
+
+### 8.2 Vista de estructura interna
+
+Para representar la estructura interna de la Plataforma de Gestión de Construcción se utiliza la notación C4 de nivel 2. Esta notación permite identificar los principales contenedores que conforman la solución, sus responsabilidades y las relaciones de comunicación entre ellos, manteniendo un nivel de abstracción adecuado para comprender la arquitectura sin entrar en detalles de implementación.
+
+La vista facilita analizar cómo se distribuye la lógica del sistema entre las aplicaciones cliente, el backend y los mecanismos de persistencia, sirviendo como base para las decisiones arquitectónicas y los diagramas de comportamiento presentados en las secciones posteriores.
+
+
+**Figura 2. Vista de estructura interna de la Plataforma de Gestión de Construcción**
+![Diagrama - Vista de Estructura Interna](../diagramas/C4%20Modelo%20%E2%80%93%20Nivel%202.png)
+
+La Figura 2 presenta la estructura interna de la Plataforma de Gestión de Construcción mediante un diagrama C4 de nivel 2.
+
+La solución está conformada por cinco contenedores principales. La Aplicación Web proporciona la interfaz para las actividades administrativas y de gestión del proyecto, mientras que la Aplicación Móvil permite registrar información directamente desde la obra. Ambos clientes consumen los servicios expuestos por una API REST, la cual centraliza la lógica de negocio del sistema mediante módulos funcionales especializados.
+
+La información estructurada se almacena en una base de datos PostgreSQL, mientras que las fotografías y demás evidencias se gestionan mediante un Servicio de Almacenamiento de Objetos. Esta separación de responsabilidades favorece la mantenibilidad, escalabilidad y evolución del sistema.
+
+
+| Elemento | Tipo | Responsabilidad | Tecnología | Interfaces expuestas | Dependencias |
+|----------|------|-----------------|------------|----------------------|--------------|
+| Aplicación Web | Contenedor | Proporciona la interfaz para administradores de proyecto, arquitectos e ingenieros. Permite gestionar proyectos, cronogramas, tareas, inventario, compras y consultar reportes del sistema. | React | REST sobre HTTPS | API REST |
+| Aplicación Móvil | Contenedor | Permite registrar avances de obra, incidencias, consumo de materiales y evidencias fotográficas desde campo. Soporta operación con conectividad limitada mediante sincronización posterior. | Flutter | REST sobre HTTPS | API REST |
+| API REST | Contenedor | Centraliza la lógica de negocio del sistema. Gestiona autenticación, autorización, proyectos, cronogramas, inventario, compras, reportes y la persistencia de la información. | Spring Boot (Java 21) | Endpoints REST (`/api/v1/*`) | PostgreSQL y Servicio de Almacenamiento de Objetos |
+| Base de Datos | Base de datos | Almacena la información persistente del sistema: usuarios, proyectos, tareas, cronogramas, inventario, compras y registros históricos. | PostgreSQL | JDBC | API REST |
+| Servicio de Almacenamiento de Objetos | Sistema externo | Almacena fotografías y documentos asociados a los proyectos. La base de datos conserva únicamente las referencias a dichos archivos. | Compatible con S3 | HTTPS | API REST |
+
+### 8.3 Vista de comportamiento
+
+#### 8.3.1 Registro de avance de obra
+
+Para representar el comportamiento dinámico de la Plataforma de Gestión de Construcción se utilizan diagramas de secuencia UML, ya que permiten visualizar el intercambio de mensajes entre los principales contenedores del sistema durante la ejecución de casos de uso relevantes.
+
+Esta notación facilita comprender el flujo de información, la coordinación entre los diferentes componentes y la forma en que la arquitectura responde a los escenarios de calidad definidos, particularmente aquellos relacionados con la disponibilidad, la consistencia y la trazabilidad.
+
+**Figura 3. Diagrama de secuencia del registro de avance de obra**
+
+![Diagrama de secuencia del registro de avance de obra](../diagramas/Diagrama%20de%20secuencia%20comportamiento.png)
+
+El flujo inicia cuando el encargado de obra registra un avance desde la aplicación móvil. La información es enviada a la API REST, donde se validan los datos y se almacena el avance en la base de datos.
+
+Posteriormente, las evidencias fotográficas son enviadas al servicio de almacenamiento de objetos y sus referencias quedan asociadas al registro correspondiente.
+
+Finalmente, la API confirma el registro exitoso a la aplicación móvil, garantizando la trazabilidad de la información y la correcta asociación entre los datos y las evidencias.
+
+Escenarios de calidad validados:
+
+| Escenario | Cómo se valida |
+|------------|----------------|
+| Trazabilidad | Cada avance queda asociado a un proyecto y a sus evidencias fotográficas. |
+| Consistencia | El avance y las referencias a las fotografías se almacenan de forma controlada por la API REST. |
+| Seguridad | Toda la comunicación entre la aplicación móvil y la API se realiza mediante HTTPS y usuarios autenticados. |
+
+
+#### 8.3.2 Sincronización de información
+
+La sincronización de información es un proceso fundamental para garantizar la continuidad de las operaciones en escenarios donde la conectividad es limitada o intermitente.
+
+Durante el trabajo en campo, la aplicación móvil permite registrar información de manera local y, una vez restablecida la conexión a Internet, sincroniza los cambios con el servidor para mantener la consistencia de la información almacenada en el sistema.
+
+**Figura 4. Diagrama de secuencia de la sincronización de información**
+![Diagrama de secuencia de sincronización de información](../diagramas/Diagrama%20de%20Secuencia%20sincronizacion.png)
+
+El proceso inicia cuando la aplicación móvil detecta que la conectividad ha sido restablecida.
+
+Los registros almacenados localmente son enviados a la API REST, donde se valida la autenticación del usuario y la integridad de la información recibida.
+
+Posteriormente, la API registra o actualiza los datos correspondientes en la base de datos y devuelve una confirmación a la aplicación móvil, la cual marca los registros como sincronizados.
+
+Este mecanismo permite mantener la consistencia de la información sin interrumpir el trabajo realizado en campo.
+
+Escenarios de calidad validados:
+
+| Escenario | Cómo se valida |
+|------------|----------------|
+| Disponibilidad | La aplicación móvil continúa operando aun cuando no existe conexión a Internet y sincroniza la información cuando esta se restablece. |
+| Consistencia | La API REST valida y procesa todos los cambios antes de persistirlos en la base de datos, evitando inconsistencias en la información. |
+| Confiabilidad | La aplicación solo marca los registros como sincronizados después de recibir la confirmación de que los datos fueron almacenados correctamente. |
+
+
+
+
+
+## 9\. Estilo arquitectónico
+La Plataforma de Gestión de Construcción adopta una arquitectura monolítica modular, organizada en capas de presentación, lógica de negocio y persistencia. Este estilo permite mantener una separación clara de responsabilidades, facilita el mantenimiento del sistema y reduce la complejidad de desarrollo y despliegue, siendo una solución adecuada para el tamaño del proyecto y los requerimientos funcionales y de calidad definidos.
+
+
+### 9.1 Estilo adoptado
+
+| Estilo | Aplicación en el sistema | Justificación |
+|--------|---------------------------|---------------|
+| **Arquitectura Monolítica Modular** | La aplicación está compuesta por un único backend desarrollado en Spring Boot que organiza la lógica del negocio en módulos como autenticación, proyectos, inventario, compras, cronogramas y reportes. Las aplicaciones web y móvil consumen los servicios expuestos mediante una API REST común. | Este estilo responde adecuadamente a los requerimientos del sistema al reducir la complejidad arquitectónica, facilitar el mantenimiento y permitir una evolución gradual de los módulos funcionales. Además, favorece la consistencia de la información, simplifica el despliegue y resulta apropiado para un equipo de desarrollo pequeño y un volumen de usuarios moderado. |
+
+
+### 9.2 Alternativas consideradas y rechazadas
+
+Durante el diseño de la arquitectura se evaluaron diferentes estilos arquitectónicos con el objetivo de seleccionar la alternativa que mejor respondiera a los requerimientos funcionales y a los escenarios de calidad definidos para la Plataforma de Gestión de Construcción.
+
+A continuación, se presentan las principales alternativas consideradas y las razones por las cuales fueron descartadas.
+
+| Alternativa | Por qué se consideró | Por qué se rechazó |
+|-------------|----------------------|--------------------|
+| **Arquitectura de Microservicios** | Permite desplegar servicios de manera independiente, facilita el escalamiento de funcionalidades específicas y favorece la autonomía de los módulos del sistema. | Incrementa significativamente la complejidad de desarrollo, despliegue y monitoreo. Para el tamaño del proyecto, el equipo de desarrollo y el volumen esperado de usuarios, sus beneficios no compensan el costo adicional de implementación y mantenimiento. |
+| **Arquitectura Hexagonal** | Favorece el desacoplamiento entre la lógica de negocio y las tecnologías externas, mejorando la mantenibilidad y la capacidad de realizar pruebas unitarias. | Introduce una complejidad estructural mayor que la requerida para este proyecto. Los beneficios obtenidos no justifican el esfuerzo adicional considerando el alcance funcional y el tamaño del sistema. |
+
+### 9.3 Análisis de trade-offs del estilo elegido
+
+Toda decisión arquitectónica implica beneficios y compromisos. La adopción de una arquitectura monolítica modular responde a las necesidades actuales de la Plataforma de Gestión de Construcción; sin embargo, también implica ciertas limitaciones que fueron aceptadas considerando el alcance del proyecto, el tamaño del equipo de desarrollo y los escenarios de calidad priorizados.
+
+| Trade-off | Beneficio obtenido | Compromiso asumido | Escenario(s) relacionado(s) |
+|-----------|--------------------|--------------------|-----------------------------|
+| **Arquitectura monolítica modular** | Simplifica el desarrollo, las pruebas, el despliegue y el mantenimiento al centralizar la lógica de negocio en una única aplicación. | El escalamiento se realiza sobre toda la aplicación y no por módulos individuales, lo que puede incrementar el consumo de recursos conforme el sistema crece. | QA-05 (Mantenibilidad), QA-06 (Escalabilidad) |
+| **API REST centralizada** | Centraliza las reglas de negocio y las validaciones, garantizando un comportamiento uniforme para las aplicaciones web y móvil. | La disponibilidad de ambos clientes depende del correcto funcionamiento de la API REST. | QS-01 (Disponibilidad), QS-02 (Consistencia) |
+| **Almacenamiento externo de fotografías** | Reduce el tamaño de la base de datos y facilita la gestión de archivos multimedia de gran tamaño. | Introduce dependencia de un servicio adicional para almacenar y recuperar las evidencias fotográficas. | QS-05 (Resiliencia en la sincronización de fotografías), QS-03 (Trazabilidad) |
+| **Separación entre base de datos y almacenamiento de objetos** | Permite almacenar únicamente las referencias a los archivos en la base de datos, mejorando la organización de la información. | Requiere mantener la consistencia entre los registros de la base de datos y los archivos almacenados externamente. | QS-02 (Consistencia), QS-03 (Trazabilidad) |
+
