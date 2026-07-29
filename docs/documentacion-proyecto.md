@@ -698,11 +698,9 @@ Esta decisión deberá revisarse si se incorporan nuevos requerimientos de auten
 
 ## 11. Diseño Detallado del Primer Componente: Registro de Avance de Obra
 
-Esta sección detalla el diseño a nivel de componentes para el caso de uso principal de **Registro de Avance de Obra**, abordando su estructura interna, el manejo de errores (robustez) y el contrato de interfaz expuesto para los clientes (web y móvil).
-
 ### 11.1 Secuencia del flujo principal
 
-El comportamiento dinámico de este componente ya se encuentra documentado en la sección **8.3.1 Registro de avance de obra** (ver Figura 3). El flujo establece que la aplicación móvil envía los datos a la API REST, el backend coordina la subida de fotografías al servicio de almacenamiento (Amazon S3), guarda la información transaccional en PostgreSQL y retorna la confirmación al cliente.
+El Registro de Avance de Obra es el subsistema encargado de recolectar las actualizaciones diarias o semanales reportadas por los encargados en campo y sincronizarlas con la plataforma principal. El comportamiento dinámico de este componente ya se encuentra documentado en la sección **8.3.1 Registro de avance de obra** (ver Figura 3). El flujo establece que la aplicación móvil envía los datos a la API REST, el backend coordina la subida de fotografías al servicio de almacenamiento (Amazon S3), guarda la información transaccional en PostgreSQL y retorna la confirmación al cliente.
 
 ### 11.2 Diagrama de clases de diseño
 
