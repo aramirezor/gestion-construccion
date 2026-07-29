@@ -464,3 +464,229 @@ Toda decisión arquitectónica implica beneficios y compromisos. La adopción de
 | **Almacenamiento externo de fotografías** | Reduce el tamaño de la base de datos y facilita la gestión de archivos multimedia de gran tamaño. | Introduce dependencia de un servicio adicional para almacenar y recuperar las evidencias fotográficas. | QS-05 (Resiliencia en la sincronización de fotografías), QS-03 (Trazabilidad) |
 | **Separación entre base de datos y almacenamiento de objetos** | Permite almacenar únicamente las referencias a los archivos en la base de datos, mejorando la organización de la información. | Requiere mantener la consistencia entre los registros de la base de datos y los archivos almacenados externamente. | QS-02 (Consistencia), QS-03 (Trazabilidad) |
 
+## 10. Registro de Decisiones Arquitectónicas (ADR)
+
+### 10.1 ADR-001 – Adopción de una arquitectura monolítica modular
+
+| Campo | Detalle |
+| :--- | :--- |
+| **Estado** | Aceptada |
+| **Fecha** | 2026-07-26 |
+| **Autores** | Andrés José Ramírez Ortega, Braulio Rivera Espinoza y Valery Carvajal Oreamuno |
+
+**Contexto**
+La Plataforma de Gestión de Construcción debe soportar la gestión de proyectos, materiales, cronogramas, compras, avances de obra y evidencias fotográficas mediante una aplicación web y una aplicación móvil. Además, el sistema debe operar en entornos con conectividad limitada, manteniendo la consistencia de la información y facilitando su evolución conforme aumenten las funcionalidades del proyecto. 
+Durante el diseño arquitectónico fue necesario seleccionar un estilo que equilibrara simplicidad, mantenibilidad y capacidad de crecimiento, considerando el tamaño del equipo de desarrollo, el alcance funcional del sistema y los escenarios de calidad definidos para el proyecto.
+
+**Decisión**
+Se decidió adoptar una arquitectura monolítica modular, organizada en capas de presentación, lógica de negocio y persistencia. La lógica de negocio se divide en módulos funcionales independientes (por ejemplo, autenticación, proyectos, inventario, compras, cronogramas y reportes), todos desplegados como una única aplicación backend.
+Esta arquitectura permite mantener una separación clara de responsabilidades sin introducir la complejidad operativa asociada a una arquitectura distribuida.
+
+**Alternativas consideradas**
+
+| Alternativa | Ventajas | Desventajas | Por qué se descartó |
+| :--- | :--- | :--- | :--- |
+| **Arquitectura de Microservicios** | Escalamiento independiente, despliegues desacoplados y mayor aislamiento entre servicios. | Mayor complejidad en comunicación, despliegue, monitoreo y administración de infraestructura. | El tamaño del proyecto y el volumen esperado de usuarios no justifican el incremento de complejidad operativa. |
+| **Arquitectura Hexagonal (Ports and Adapters)** | Favorece el desacoplamiento de la lógica de negocio y mejora la capacidad de realizar pruebas unitarias. | Requiere una estructura de software más compleja y un mayor esfuerzo de implementación. | Los beneficios obtenidos no compensan la complejidad adicional para el alcance actual del sistema. |
+
+**Consecuencias positivas**
+* Simplifica el desarrollo y el despliegue de la solución al mantener un único backend.
+* Facilita el mantenimiento mediante la organización del sistema en módulos funcionales.
+* Reduce la complejidad operativa y administrativa en comparación con arquitecturas distribuidas.
+* Favorece la consistencia de la lógica de negocio al centralizar las reglas del sistema.
+* Responde adecuadamente a los escenarios de disponibilidad y consistencia definidos para el proyecto.
+
+**Consecuencias negativas**
+* El escalamiento se realiza sobre la aplicación completa y no sobre módulos individuales.
+* Un fallo crítico en el backend puede afectar a todas las funcionalidades del sistema.
+* La evolución hacia una arquitectura distribuida requerirá una refactorización importante si el sistema crece considerablemente.
+
+**Revisión requerida si**
+Esta decisión deberá revisarse si el crecimiento del sistema hace necesario escalar funcionalidades específicas de manera independiente, si aumenta considerablemente el número de usuarios concurrentes o si la complejidad del dominio justifica la migración hacia una arquitectura distribuida basada en microservicios.
+
+### 10.2 ADR-002 – Uso de API REST como mecanismo de comunicación entre clientes y backend
+
+| Campo | Detalle |
+| :--- | :--- |
+| **Estado** | Aceptada |
+| **Fecha** | 2026-07-26 |
+| **Autores** | Andrés José Ramírez Ortega, Braulio Rivera Espinoza y Valery Carvajal Oreamuno |
+
+**Contexto**
+La plataforma será utilizada tanto desde una aplicación web como desde una aplicación móvil. Ambas interfaces deben acceder a la misma información y ejecutar las mismas reglas de negocio, garantizando consistencia en las operaciones y evitando la duplicación de lógica entre clientes.
+Además, el sistema debe permitir la sincronización de información registrada en campo cuando la conectividad sea limitada o intermitente, por lo que se requiere un mecanismo de comunicación estándar, interoperable y ampliamente soportado.
+
+**Decisión**
+Se decidió implementar una API REST como mecanismo de comunicación entre los clientes (aplicación web y aplicación móvil) y el backend del sistema.
+La API será responsable de centralizar la lógica de negocio, validar las solicitudes recibidas, gestionar el acceso a los recursos del sistema y servir como punto único de integración para todos los clientes.
+
+**Alternativas consideradas**
+
+| Alternativa | Ventajas | Desventajas | Por qué se descartó |
+| :--- | :--- | :--- | :--- |
+| **GraphQL** | Permite solicitar únicamente la información necesaria y reduce el número de peticiones en algunos escenarios. | Requiere una mayor complejidad en el diseño del esquema, la implementación y la gestión de consultas. | Los casos de uso del sistema se adaptan adecuadamente a una API REST, por lo que la complejidad adicional de GraphQL no aporta beneficios significativos. |
+| **gRPC** | Alta eficiencia en la comunicación entre servicios y mejor rendimiento en escenarios de alto volumen. | Está orientado principalmente a la comunicación entre servicios y presenta menor facilidad de integración con clientes web y móviles. | La prioridad del proyecto es facilitar la interoperabilidad entre diferentes clientes mediante un protocolo ampliamente adoptado en aplicaciones empresariales. |
+
+**Consecuencias positivas**
+* Centraliza las reglas de negocio y evita la duplicación de lógica entre clientes.
+* Facilita el desarrollo independiente de la aplicación web y la aplicación móvil.
+* Permite reutilizar los mismos servicios para futuras integraciones.
+* Utiliza estándares ampliamente adoptados, facilitando el mantenimiento y la evolución del sistema.
+* Favorece la consistencia de la información al procesar todas las operaciones desde un único punto de acceso.
+
+**Consecuencias negativas**
+* La API constituye un punto central cuya indisponibilidad afecta a todos los clientes.
+* Puede incrementar el número de solicitudes HTTP en operaciones que requieren múltiples recursos.
+* Requiere implementar mecanismos adecuados de autenticación, autorización y control de errores para garantizar la seguridad y disponibilidad del servicio.
+
+**Revisión requerida si**
+Esta decisión deberá revisarse si surgen nuevos requerimientos de integración que demanden un mecanismo de comunicación más eficiente o flexible, si el volumen de intercambio de datos crece significativamente o si aparecen casos de uso donde REST deje de satisfacer adecuadamente las necesidades de rendimiento o consumo de datos.
+
+### 10.3 ADR-003 – Selección de PostgreSQL como motor de base de datos
+
+| Campo | Detalle |
+| :--- | :--- |
+| **Estado** | Aceptada |
+| **Fecha** | 2026-07-26 |
+| **Autores** | Andrés José Ramírez Ortega, Braulio Rivera Espinoza y Valery Carvajal Oreamuno |
+
+**Contexto**
+La Plataforma de Gestión de Construcción debe almacenar información estructurada relacionada con proyectos, cronogramas, materiales, compras, usuarios, evidencias y registros de auditoría. Esta información presenta múltiples relaciones entre entidades y requiere mantener la integridad y consistencia de los datos, incluso cuando los registros son sincronizados desde dispositivos móviles que operan sin conexión.
+Por ello, fue necesario seleccionar un motor de base de datos que garantizara confiabilidad, soporte para transacciones y facilidad de mantenimiento.
+
+**Decisión**
+Se decidió utilizar PostgreSQL como motor de base de datos principal del sistema.
+PostgreSQL proporciona un modelo relacional robusto, soporte para transacciones ACID, mecanismos avanzados de integridad referencial y un excelente rendimiento para aplicaciones empresariales con datos altamente relacionados. Estas características lo convierten en una alternativa adecuada para los requerimientos funcionales y los escenarios de calidad definidos para el proyecto.
+
+**Alternativas consideradas**
+
+| Alternativa | Ventajas | Desventajas | Por qué se descartó |
+| :--- | :--- | :--- | :--- |
+| **MySQL** | Amplia adopción, facilidad de administración y buen rendimiento para aplicaciones web tradicionales. | Ofrece menor flexibilidad en algunas funcionalidades avanzadas y menor capacidad de extensión respecto a PostgreSQL. | PostgreSQL proporciona un conjunto más amplio de características orientadas a aplicaciones empresariales y manejo de relaciones complejas. |
+| **MongoDB** | Alta flexibilidad para almacenar información no estructurada y facilidad para escalar horizontalmente. | No resulta ideal para un dominio con múltiples relaciones e integridad referencial estricta. | La naturaleza relacional del sistema hace más apropiado el uso de una base de datos relacional que garantice consistencia transaccional. |
+
+**Consecuencias positivas**
+* Garantiza la integridad y consistencia de la información mediante transacciones ACID.
+* Facilita el modelado de relaciones entre proyectos, usuarios, materiales y cronogramas.
+* Proporciona un alto nivel de confiabilidad para operaciones críticas del negocio.
+* Permite escalar el sistema manteniendo un modelo de datos estructurado y consistente.
+
+**Consecuencias negativas**
+* El esquema relacional requiere una planificación más cuidadosa que una base de datos NoSQL.
+* Cambios importantes en el modelo de datos pueden requerir migraciones de esquema.
+* El escalamiento horizontal suele ser más complejo que en algunas soluciones NoSQL.
+
+**Revisión requerida si**
+Esta decisión deberá revisarse si el modelo de datos evoluciona hacia estructuras predominantemente no relacionales, si los requerimientos de escalabilidad horizontal superan las capacidades del motor seleccionado o si aparecen necesidades de almacenamiento que no puedan resolverse eficientemente mediante un modelo relacional.
+
+### 10.4 ADR-004 – Uso de un servicio de almacenamiento de objetos para evidencias fotográficas
+
+| Campo | Detalle |
+| :--- | :--- |
+| **Estado** | Aceptada |
+| **Fecha** | 2026-07-26 |
+| **Autores** | Andrés José Ramírez Ortega, Braulio Rivera Espinoza y Valery Carvajal Oreamuno |
+
+**Contexto**
+La Plataforma de Gestión de Construcción permite registrar evidencias fotográficas como respaldo del avance de las actividades realizadas en obra. Estas imágenes pueden representar una cantidad considerable de datos y deben estar disponibles para consulta desde las aplicaciones web y móvil.
+Durante el diseño de la arquitectura fue necesario definir un mecanismo de almacenamiento que permitiera gestionar archivos multimedia de forma eficiente, evitando afectar el rendimiento de la base de datos utilizada para almacenar la información transaccional.
+
+**Decisión**
+Se decidió almacenar las evidencias fotográficas en un servicio de almacenamiento de objetos, utilizando Amazon S3 como tecnología propuesta para la implementación. La base de datos únicamente almacenará la información descriptiva de cada evidencia y la referencia al archivo correspondiente.
+Esta separación permite optimizar el almacenamiento de datos, mejorar el rendimiento del sistema y facilitar la administración de archivos multimedia.
+
+**Alternativas consideradas**
+
+| Alternativa | Ventajas | Desventajas | Por qué se descartó |
+| :--- | :--- | :--- | :--- |
+| **Almacenar imágenes directamente en PostgreSQL (BLOB)** | Centraliza toda la información en un único sistema y simplifica algunas operaciones de respaldo. | Incrementa significativamente el tamaño de la base de datos y puede afectar el rendimiento de consultas y respaldos. | No resulta adecuado para manejar grandes volúmenes de archivos multimedia ni favorece la escalabilidad del sistema. |
+| **Sistema de archivos local del servidor** | Implementación sencilla y bajo costo inicial. | Dificulta la escalabilidad, la alta disponibilidad y la administración de archivos en entornos distribuidos. | Limita la evolución de la arquitectura y genera dependencia del servidor donde se ejecuta la aplicación. |
+
+**Consecuencias positivas**
+* Reduce el tamaño y la carga de la base de datos.
+* Mejora el rendimiento de las operaciones transaccionales.
+* Facilita la administración y recuperación de archivos multimedia.
+* Permite escalar el almacenamiento de manera independiente del resto del sistema.
+* Favorece la disponibilidad y durabilidad de las evidencias fotográficas.
+
+**Consecuencias negativas**
+* Introduce dependencia de un servicio adicional para almacenar y recuperar archivos.
+* Requiere mantener la consistencia entre los registros de la base de datos y los objetos almacenados.
+* Incrementa la complejidad de la gestión de permisos y control de acceso sobre los archivos.
+
+**Revisión requerida si**
+Esta decisión deberá revisarse si el volumen de archivos multimedia disminuye significativamente, si aparecen requerimientos que obliguen a almacenar toda la información en un único repositorio o si el servicio de almacenamiento de objetos deja de satisfacer los requisitos de costo, disponibilidad o rendimiento del sistema.
+
+### 10.5 ADR-005 – Soporte para operación offline mediante sincronización diferida
+
+| Campo | Detalle |
+| :--- | :--- |
+| **Estado** | Aceptada |
+| **Fecha** | 2026-07-26 |
+| **Autores** | Andrés José Ramírez Ortega, Braulio Rivera Espinoza y Valery Carvajal Oreamuno |
+
+**Contexto**
+La Plataforma de Gestión de Construcción será utilizada en obras donde la conectividad a Internet puede ser limitada o intermitente. Los encargados de obra deben poder registrar avances, materiales utilizados, incidencias y evidencias fotográficas sin depender de una conexión permanente.
+Debido a este escenario, la arquitectura debe garantizar la continuidad de la operación y asegurar que la información registrada en campo sea sincronizada con el servidor una vez que la conectividad sea restablecida.
+
+**Decisión**
+Se decidió implementar un mecanismo de operación offline con sincronización diferida.
+La aplicación móvil almacenará temporalmente la información generada por el usuario en un repositorio local cuando no exista conectividad. Una vez restablecida la conexión, los registros pendientes serán sincronizados con la API REST, la cual validará y persistirá la información en la base de datos, garantizando la integridad y consistencia de los datos.
+
+**Alternativas consideradas**
+
+| Alternativa | Ventajas | Desventajas | Por qué se descartó |
+| :--- | :--- | :--- | :--- |
+| **Operación exclusivamente en línea** | Arquitectura más simple y sincronización inmediata de la información. | Impide registrar datos cuando no existe conexión, afectando directamente la continuidad de las operaciones en campo. | No satisface los requerimientos del proyecto ni los escenarios de calidad relacionados con disponibilidad y resiliencia. |
+| **Sincronización en tiempo real mediante conexión permanente** | Los datos permanecen siempre actualizados entre clientes y servidor. | Depende completamente de una conexión estable y aumenta el consumo de red y batería en dispositivos móviles. | No resulta viable para el contexto operativo de obras con conectividad intermitente. |
+
+**Consecuencias positivas**
+* Permite continuar las operaciones aun cuando no exista conexión a Internet.
+* Reduce el riesgo de pérdida de información durante el trabajo en campo.
+* Mejora la experiencia de los usuarios al no depender de la disponibilidad de la red.
+* Contribuye al cumplimiento de los escenarios de disponibilidad, consistencia y resiliencia definidos para el proyecto.
+
+**Consecuencias negativas**
+* Incrementa la complejidad de la aplicación móvil al incorporar lógica de almacenamiento local y sincronización.
+* Requiere mecanismos para detectar y resolver posibles conflictos durante la sincronización.
+* Es necesario gestionar el estado de los registros pendientes y controlar la integridad de la información sincronizada.
+
+**Revisión requerida si**
+Esta decisión deberá revisarse si las condiciones operativas cambian y todos los usuarios disponen de conectividad estable y permanente, o si se incorporan nuevos requerimientos que demanden sincronización en tiempo real con garantías de consistencia inmediata.
+
+### 10.6 ADR-006 – Autenticación basada en JWT y control de acceso por roles
+
+| Campo | Detalle |
+| :--- | :--- |
+| **Estado** | Aceptada |
+| **Fecha** | 2026-07-26 |
+| **Autores** | Andrés José Ramírez Ortega, Braulio Rivera Espinoza y Valery Carvajal Oreamuno |
+
+**Contexto**
+La Plataforma de Gestión de Construcción será utilizada por distintos tipos de usuarios, entre ellos administradores, arquitectos, ingenieros, encargados de obra y personal administrativo. Cada uno requiere diferentes niveles de acceso a la información y funcionalidades del sistema.
+Además, la plataforma expone una API REST consumida por aplicaciones web y móviles, por lo que es necesario establecer un mecanismo de autenticación seguro, escalable y adecuado para clientes distribuidos.
+
+**Decisión**
+Se decidió implementar un mecanismo de autenticación basado en JSON Web Tokens (JWT) y un esquema de autorización basado en roles (RBAC).
+Una vez autenticado el usuario, el sistema emitirá un token JWT que será utilizado para validar las solicitudes realizadas a la API REST. La autorización se realizará verificando los permisos asociados al rol del usuario antes de permitir el acceso a cada recurso o funcionalidad.
+
+**Alternativas consideradas**
+
+| Alternativa | Ventajas | Desventajas | Por qué se descartó |
+| :--- | :--- | :--- | :--- |
+| **Autenticación basada en sesiones** | Implementación sencilla para aplicaciones web tradicionales y control centralizado de las sesiones activas. | Requiere mantener estado en el servidor y dificulta la integración con aplicaciones móviles y arquitecturas distribuidas. | La plataforma incluye clientes web y móviles, por lo que se buscó una solución desacoplada y sin estado. |
+| **API Keys** | Implementación simple y bajo costo de administración para integraciones entre sistemas. | No permite identificar adecuadamente usuarios individuales ni gestionar permisos detallados según el rol. | No satisface los requerimientos de autenticación y autorización para usuarios con distintos perfiles de acceso. |
+
+**Consecuencias positivas**
+* Permite un mecanismo de autenticación sin estado, adecuado para una API REST.
+* Facilita la integración de múltiples clientes utilizando el mismo esquema de autenticación.
+* Mejora la seguridad al restringir el acceso a los recursos según el rol del usuario.
+* Simplifica la escalabilidad del backend al no requerir almacenamiento de sesiones.
+
+**Consecuencias negativas**
+* Requiere una gestión adecuada del ciclo de vida de los tokens (expiración, renovación y revocación).
+* La información contenida en el token debe protegerse mediante el uso de HTTPS y almacenamiento seguro en los clientes.
+* Incrementa la complejidad de la implementación al incorporar mecanismos de autenticación y autorización.
+
+**Revisión requerida si**
+Esta decisión deberá revisarse si se incorporan nuevos requerimientos de autenticación, como integración con proveedores de identidad externos (por ejemplo, OAuth 2.0 u OpenID Connect), autenticación multifactor (MFA) o mecanismos de autorización más granulares que los proporcionados por un esquema basado únicamente en roles.
