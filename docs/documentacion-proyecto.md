@@ -79,6 +79,11 @@ Control de Versiones
    - 10.5 ADR-005 – Soporte para operación offline mediante sincronización diferida
    - 10.6 ADR-006 – Autenticación basada en JWT y control de acceso por roles
 
+11. Diseño Detallado del Primer Componente: Registro de Avance de Obra
+   - 11.1 Secuencia del flujo principal
+   - 11.2 Diagrama de clases de diseño
+   - 11.3 Análisis de robustez
+   - 11.4 Contratos de interfaz documentados
 
 
 # 1\. Descripción del Sistema y Alcance
@@ -690,3 +695,72 @@ Una vez autenticado el usuario, el sistema emitirá un token JWT que será utili
 
 **Revisión requerida si**
 Esta decisión deberá revisarse si se incorporan nuevos requerimientos de autenticación, como integración con proveedores de identidad externos (por ejemplo, OAuth 2.0 u OpenID Connect), autenticación multifactor (MFA) o mecanismos de autorización más granulares que los proporcionados por un esquema basado únicamente en roles.
+
+## 11. Diseño Detallado del Primer Componente: Registro de Avance de Obra
+
+Esta sección detalla el diseño a nivel de componentes para el caso de uso principal de **Registro de Avance de Obra**, abordando su estructura interna, el manejo de errores (robustez) y el contrato de interfaz expuesto para los clientes (web y móvil).
+
+### 11.1 Secuencia del flujo principal
+
+El comportamiento dinámico de este componente ya se encuentra documentado en la sección **8.3.1 Registro de avance de obra** (ver Figura 3). El flujo establece que la aplicación móvil envía los datos a la API REST, el backend coordina la subida de fotografías al servicio de almacenamiento (Amazon S3), guarda la información transaccional en PostgreSQL y retorna la confirmación al cliente.
+
+### 11.2 Diagrama de clases de diseño
+
+El siguiente diagrama de clases ilustra la estructura interna del backend (Spring Boot) para el módulo de avances, aplicando el patrón de diseño MVC y la separación por capas (Controlador, Servicio y Repositorio).
+
+**Figura 5. Diagrama de clases de diseño**
+
+**Descripción de las clases principales:**
+*   **AvanceController:** Punto de entrada de la API REST. Se encarga de recibir las peticiones HTTP, validar la estructura básica del payload (anotaciones de validación) y retornar los códigos de estado HTTP correspondientes.
+*   **AvanceService:** Contiene la lógica de negocio. Orquesta la subida de imágenes a S3 y el guardado en la base de datos de manera transaccional.
+*   **S3StorageService:** Servicio adaptador encargado de la comunicación directa con el API de Amazon S3.
+*   **AvanceRepository:** Interfaz basada en Spring Data JPA para la persistencia en PostgreSQL.
+*   **Avance (Entity):** Representa el modelo de dominio y la tabla en la base de datos relacional.
+
+### 11.3 Análisis de robustez
+
+Para garantizar la fiabilidad del sistema frente a fallos (particularmente por las restricciones de red y servicios externos), el componente implementa los siguientes mecanismos de manejo de excepciones:
+
+1.  **Fallo en la conexión a la base de datos (PostgreSQL):**
+    *   Si la base de datos no está disponible al momento de guardar el `Avance`, la capa de servicio capturará la excepción interna. El backend responderá con un código HTTP `503 Service Unavailable`. La aplicación móvil (cliente) detectará este error y mantendrá el registro en su cola local para reintentar la sincronización más tarde.
+2.  **Fallo en la subida de evidencias a Amazon S3:**
+    *   Si el servicio de almacenamiento externo falla por timeout o credenciales inválidas, el método transaccional de Spring Boot (`@Transactional`) realizará un *rollback* automático. Esto evita que quede guardado un avance en la base de datos sin sus fotografías correspondientes, manteniendo la consistencia (Escenario QS-02). El cliente recibirá un HTTP `502 Bad Gateway`.
+3.  **Datos de entrada inválidos (Payload incorrecto):**
+    *   Si la petición enviada desde el móvil no incluye campos obligatorios (ej. `proyectoId` o `descripcion`), el `AvanceController` rechazará la petición inmediatamente (ej. mediante `MethodArgumentNotValidException`), retornando un HTTP `400 Bad Request` sin llegar a consumir recursos de base de datos ni almacenamiento.
+
+### 11.4 Contratos de interfaz documentados
+
+A continuación, se detalla el contrato de la API REST (Endpoint) que consume la aplicación móvil para registrar un avance.
+
+*   **Endpoint:** `POST /api/v1/avances`
+*   **Descripción:** Permite a un usuario autenticado registrar un nuevo avance de obra asociando evidencias fotográficas.
+*   **Headers requeridos:**
+    *   `Authorization: Bearer <JWT_TOKEN>`
+    *   `Content-Type: application/json`
+
+**Request Body (JSON):**
+
+```json
+{
+  "proyectoId": "550e8400-e29b-41d4-a716-446655440000",
+  "usuarioId": "123e4567-e89b-12d3-a456-426614174000",
+  "descripcion": "Fundición de losas del segundo nivel sector A.",
+  "porcentajeCompletado": 15.5,
+  "fechaRegistro": "2026-07-28T14:30:00Z",
+  "evidenciasBase64": [
+    "iVBORw0KGgoAAAANSUhEUgAA...", 
+    "R0lGODlhAQABAIAAAAAAAP..."
+  ]
+}
+```
+*(Nota: Para optimizar la sincronización diferida, las imágenes se envían codificadas en Base64 en el payload o mediante una arquitectura multipart/form-data según la configuración del cliente).*
+
+**Respuestas esperadas:**
+
+| Código HTTP | Significado | Estructura del Response (Ejemplo) |
+| :--- | :--- | :--- |
+| **201 Created** | Avance registrado y evidencias subidas exitosamente. | `{ "mensaje": "Avance registrado con éxito", "avanceId": "uuid" }` |
+| **400 Bad Request** | Faltan campos obligatorios o formatos incorrectos. | `{ "error": "BAD_REQUEST", "detalles": ["descripcion es requerida"] }` |
+| **401 Unauthorized** | El token JWT no existe, está mal formado o ha expirado. | `{ "error": "UNAUTHORIZED", "mensaje": "Token inválido o expirado" }` |
+| **403 Forbidden** | El usuario autenticado no tiene el rol necesario en este proyecto. | `{ "error": "FORBIDDEN", "mensaje": "No tiene permisos en este proyecto" }` |
+| **500 / 503** | Error interno del servidor o pérdida de conexión con PostgreSQL/S3. | `{ "error": "SERVICE_UNAVAILABLE", "mensaje": "Error temporal guardando el registro" }` |
