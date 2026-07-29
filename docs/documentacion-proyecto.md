@@ -700,9 +700,13 @@ Esta decisión deberá revisarse si se incorporan nuevos requerimientos de auten
 
 ### 11.1 Secuencia del flujo principal
 
+(../diagramas/diagrama_flujo_Avance_de_Obra.png)
+
 El Registro de Avance de Obra es el subsistema encargado de recolectar las actualizaciones diarias o semanales reportadas por los encargados en campo y sincronizarlas con la plataforma principal. El comportamiento dinámico de este componente ya se encuentra documentado en la sección **8.3.1 Registro de avance de obra** (ver Figura 3). El flujo establece que la aplicación móvil envía los datos a la API REST, el backend coordina la subida de fotografías al servicio de almacenamiento (Amazon S3), guarda la información transaccional en PostgreSQL y retorna la confirmación al cliente.
 
 ### 11.2 Diagrama de clases de diseño
+
+(../diagramas/diagrama_clase_Avance_de_Obra.png)
 
 El siguiente diagrama de clases ilustra la estructura interna del backend (Spring Boot) para el módulo de avances, aplicando el patrón de diseño MVC y la separación por capas (Controlador, Servicio y Repositorio).
 
