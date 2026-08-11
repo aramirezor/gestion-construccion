@@ -1,0 +1,18 @@
+sequenceDiagram
+    actor Usuario
+    participant Client as Aplicación Web/Móvil
+    participant Auth as AuthController
+    participant Service as AuthService
+    participant Repo as UserRepository
+    participant JWT as JwtTokenService
+
+    Usuario->>Client: Ingresa credenciales
+    Client->>Auth: POST /api/v1/auth/login
+    Auth->>Service: authenticate(request)
+    Service->>Repo: findByUsername(username)
+    Repo-->>Service: User
+    Service->>JWT: generate(User)
+    JWT-->>Service: JWT
+    Service-->>Auth: TokenResponse
+    Auth-->>Client: 200 OK + JWT
+    Client-->>Usuario: Sesión autenticada

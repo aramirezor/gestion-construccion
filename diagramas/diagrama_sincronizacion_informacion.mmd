@@ -1,0 +1,49 @@
+classDiagram
+    class SyncController {
+        +syncPendingRecords() SyncResult
+        +syncRecord(UUID localId) SyncStatus
+    }
+
+    class SyncService {
+        +syncPendingRecords() SyncResult
+        +syncRecord(SyncRecord record) SyncStatus
+        -markAsSynced(UUID localId) void
+        -markAsConflict(UUID localId) void
+    }
+
+    class SyncStrategy {
+        <<interface>>
+        +resolve(SyncRecord local, ServerRecord server) ConflictResult
+    }
+
+    class ManualConflictStrategy {
+        +resolve(SyncRecord local, ServerRecord server) ConflictResult
+    }
+
+    class SyncRepository {
+        <<interface>>
+        +findPending() List~SyncRecord~
+        +markSynced(UUID localId) void
+        +markConflict(UUID localId) void
+    }
+
+    class SyncRecord {
+        -UUID localId
+        -String entityType
+        -String payload
+        -SyncStatus status
+        -Instant createdAt
+        +markSynced() void
+        +markConflict() void
+    }
+
+    class ApiClient {
+        +send(SyncRecord record) SyncResponse
+    }
+
+    SyncController --> SyncService : invoca
+    SyncService --> SyncRepository : consulta cola
+    SyncService --> ApiClient : envía cambios
+    SyncService --> SyncStrategy : resuelve conflicto
+    SyncStrategy <|.. ManualConflictStrategy
+    SyncRepository --> SyncRecord : administra

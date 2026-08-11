@@ -1,0 +1,11 @@
+sequenceDiagram
+    participant Client as Aplicación Web/Móvil
+    participant Filter as JwtAuthenticationFilter
+    participant JWT as JwtTokenService
+    participant API as Recurso protegido
+
+    Client->>Filter: Request + JWT
+    Filter->>JWT: validate(token)
+    JWT-->>Filter: Token inválido/expirado
+    Filter-->>Client: 401 Unauthorized
+    Client->>API: No ejecuta operación protegida

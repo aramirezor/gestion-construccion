@@ -16,8 +16,8 @@ Maestría Profesional en Ingeniería del Software
 | URL del repositorio | https://github.com/aramirezor/gestion-construccion.git |
 | Docente | Juan Mauricio Leandro |
 | Cuatrimestre | 2026 — II Cuatrimestre |
-| Versión del documento | 0.5 — Avance 2 |
-| Fecha de última actualización | 2026-07-26 |
+| Versión del documento | 1.0 — Entrega final |
+| Fecha de última actualización | 2026-08-09 |
 
 San José, Costa Rica 2026
 
@@ -30,6 +30,7 @@ Control de Versiones
 | 0.3 | 2026-06-28 | Avance 1 (S07) - Correcciones | Profundización del problema arquitectónico central (operación offline, política de conflictos y priorización de sincronización); ampliación de stakeholders (Cliente, Bodega, Proveedores); ajuste técnico de drivers arquitectónicos; redefinición de escenarios de calidad con métricas verificables y adición de escenario de resiliencia para fotografías; optimización de la vista de contexto. | Andrés José Ramírez Ortega María José Hernández López Braulio Rivera Espinoza Valery Carvajal Oreamuno |
 | 0.4 | 2026-06-28 | Avance 1 (S07) - Ajustes finales | Reestructuración del documento para mantener consistencia con el alcance del avance; fortalecimiento de la lógica y coherencia entre las secciones; refinamiento de la descripción del sistema, drivers arquitectónicos, escenarios de calidad y vista de contexto; eliminación de secciones no desarrolladas y corrección de numeración, formato y redacción general. | Andrés José Ramírez Ortega María José Hernández López Braulio Rivera Espinoza Valery Carvajal Oreamuno |
 | 0.5 | 2026-07-26 | Avance 2 (S11) | Incorporación de la vista de estructura interna y la vista de comportamiento; definición del estilo arquitectónico y análisis de sus trade-offs; documentación del registro de decisiones arquitectónicas (ADR); diseño detallado del componente de Registro de Avances (diagrama de clases, robustez y contrato de interfaz); revisión y actualización general del documento para mantener la consistencia entre las vistas, los escenarios de calidad y las decisiones de diseño. | Andrés José Ramírez Ortega María José Hernández López Braulio Rivera Espinoza Valery Carvajal Oreamuno |
+| 1.0 | 2026-08-09 | Entrega final (S14) | Finalización del Bloque 5 — Diseño Detallado: diseño de tres componentes críticos, contratos de interfaz, análisis de robustez, diagramas de secuencia y clases, aplicación de patrones de diseño y evidencia de principios de diseño. | Andrés José Ramírez Ortega, Braulio Rivera Espinoza y Valery Carvajal Oreamuno |
 |  |  |  |  |  |
 
 # 
@@ -79,12 +80,14 @@ Control de Versiones
    - 10.5 ADR-005 – Soporte para operación offline mediante sincronización diferida
    - 10.6 ADR-006 – Autenticación basada en JWT y control de acceso por roles
 
-11. Diseño Detallado del Primer Componente: Registro de Avance de Obra
-   - 11.1 Secuencia del flujo principal
-   - 11.2 Diagrama de clases de diseño
-   - 11.3 Análisis de robustez
-   - 11.4 Contratos de interfaz documentados
+11. Diseño Detallado de Componentes
+   - 11.1 Registro de Avance de Obra
+   - 11.2 Sincronización de Información
+   - 11.3 Autenticación y Autorización
 
+12. Patrones de Diseño Aplicados
+
+13. Principios y Técnicas Habilitadoras — Evidencia
 
 # 1\. Descripción del Sistema y Alcance
 
@@ -436,7 +439,7 @@ Escenarios de calidad validados:
 
 
 
-## 9\. Estilo arquitectónico
+## 9. Estilo arquitectónico
 La Plataforma de Gestión de Construcción adopta una arquitectura monolítica modular, organizada en capas de presentación, lógica de negocio y persistencia. Este estilo permite mantener una separación clara de responsabilidades, facilita el mantenimiento del sistema y reduce la complejidad de desarrollo y despliegue, siendo una solución adecuada para el tamaño del proyecto y los requerimientos funcionales y de calidad definidos.
 
 
@@ -696,73 +699,223 @@ Una vez autenticado el usuario, el sistema emitirá un token JWT que será utili
 **Revisión requerida si**
 Esta decisión deberá revisarse si se incorporan nuevos requerimientos de autenticación, como integración con proveedores de identidad externos (por ejemplo, OAuth 2.0 u OpenID Connect), autenticación multifactor (MFA) o mecanismos de autorización más granulares que los proporcionados por un esquema basado únicamente en roles.
 
-## 11. Primer Componente: Registro de Avance de Obra
+## 11. Diseño detallado de componentes
 
-### 11.1 Secuencia del flujo principal
+El diseño detallado se concentra en tres componentes que presentan el mayor impacto sobre los atributos de calidad prioritarios y sobre el desafío arquitectónico central del sistema: **Registro de Avance de Obra**, **Sincronización de Información** y **Autenticación y Autorización**. Estos componentes se relacionan directamente con los casos de uso definidos para los usuarios de campo y oficina y con los mecanismos establecidos en la vista de estructura interna, la vista de comportamiento y los ADR documentados.
 
-![Diagrama de flujo Avance de Obra](../diagramas/diagrama_flujo_Avance_de_Obra.png)
+> **Nota:** El primer componente ya contaba con diseño preliminar en el documento anterior. En esta versión se reorganiza según la estructura del template y se completa con contratos, análisis de robustez, flujo principal y camino de error. Los componentes 2 y 3 constituyen el diseño detallado que completa el alcance solicitado para el Bloque 5.
 
-El Registro de Avance de Obra es el subsistema encargado de recolectar las actualizaciones diarias o semanales reportadas por los encargados en campo y sincronizarlas con la plataforma principal. El comportamiento dinámico de este componente ya se encuentra documentado en la sección **8.3.1 Registro de avance de obra**. El flujo establece que la aplicación móvil envía los datos a la API REST, el backend coordina la subida de fotografías al servicio de almacenamiento (Amazon S3), guarda la información transaccional en PostgreSQL y retorna la confirmación al cliente.
+### Componente 1 — Registro de Avance de Obra
 
-### 11.2 Diagrama de clases de diseño
+**Responsabilidad:** Recibir, validar y persistir los avances de obra reportados desde campo, coordinando la asociación de evidencias fotográficas y garantizando la consistencia de la operación.
 
-![Diagrama de clases Avance de Obra](../diagramas/diagrama_clase_Avance_de_Obra.png)
+**Trazabilidad:** CU1: Registrar avances de obra, CU4: Adjuntar evidencia fotográfica → API REST / módulo de avances, identificado en la vista de estructura interna de la sección 8.2.
 
-El siguiente diagrama de clases ilustra la estructura interna del backend (Spring Boot) para el módulo de avances, aplicando el patrón de diseño MVC y la separación por capas (Controlador, Servicio y Repositorio).
+#### 11.1.1 Diagrama de clases de diseño
 
-**Figura 5. Diagrama de clases de diseño**
 
-**Descripción de las clases principales:**
-*   **AvanceController:** Punto de entrada de la API REST. Se encarga de recibir las peticiones HTTP, validar la estructura básica del payload (anotaciones de validación) y retornar los códigos de estado HTTP correspondientes.
-*   **AvanceService:** Contiene la lógica de negocio. Orquesta la subida de imágenes a S3 y el guardado en la base de datos de manera transaccional.
-*   **S3StorageService:** Servicio adaptador encargado de la comunicación directa con el API de Amazon S3.
-*   **AvanceRepository:** Interfaz basada en Spring Data JPA para la persistencia en PostgreSQL.
-*   **Avance (Entity):** Representa el modelo de dominio y la tabla en la base de datos relacional.
+**Figura 5 — Diagrama de clases de diseño del componente Registro de Avance de Obra.**
+![Diagrama de clases de diseño del componente Registro de Avance de Obra](../diagramas/diagrama_clases_registro_avance_obra.png)
 
-### 11.3 Análisis de robustez
+El diseño mantiene la separación por capas ya definida para el backend Spring Boot. `AvanceController` funciona como boundary de la API REST; `AvanceService` concentra la lógica de negocio; `AvanceRepository` encapsula la persistencia en PostgreSQL; `S3StorageService` aísla la comunicación con el almacenamiento de objetos; y `Avance` representa la entidad persistente. Esta separación evita que el controlador conozca detalles de PostgreSQL o S3 y facilita la evolución del componente.
 
-Para garantizar la fiabilidad del sistema frente a fallos (particularmente por las restricciones de red y servicios externos), el componente implementa los siguientes mecanismos de manejo de excepciones:
+#### 11.1.2 Contratos de interfaz
 
-1.  **Fallo en la conexión a la base de datos (PostgreSQL):**
-    *   Si la base de datos no está disponible al momento de guardar el `Avance`, la capa de servicio capturará la excepción interna. El backend responderá con un código HTTP `503 Service Unavailable`. La aplicación móvil (cliente) detectará este error y mantendrá el registro en su cola local para reintentar la sincronización más tarde.
-2.  **Fallo en la subida de evidencias a Amazon S3:**
-    *   Si el servicio de almacenamiento externo falla por timeout o credenciales inválidas, el método transaccional de Spring Boot (`@Transactional`) realizará un *rollback* automático. Esto evita que quede guardado un avance en la base de datos sin sus fotografías correspondientes, manteniendo la consistencia (Escenario QS-02). El cliente recibirá un HTTP `502 Bad Gateway`.
-3.  **Datos de entrada inválidos (Payload incorrecto):**
-    *   Si la petición enviada desde el móvil no incluye campos obligatorios (ej. `proyectoId` o `descripcion`), el `AvanceController` rechazará la petición inmediatamente (ej. mediante `MethodArgumentNotValidException`), retornando un HTTP `400 Bad Request` sin llegar a consumir recursos de base de datos ni almacenamiento.
+| Método / Endpoint | Precondición | Postcondición | Excepciones |
+|---|---|---|---|
+| `POST /api/v1/avances` | Usuario autenticado; `proyectoId`, `descripcion`, `porcentajeCompletado` y `fechaRegistro` válidos. | Se crea un `Avance`, se almacenan sus evidencias y se retorna `201 Created` con el identificador generado. | `400` por datos inválidos; `401` por JWT ausente o inválido; `403` por permisos insuficientes; `502` por fallo de almacenamiento; `503` por indisponibilidad de PostgreSQL. |
+| `AvanceService.crearAvance(AvanceRequest): AvanceResponse` | Request validado y usuario autorizado para el proyecto. | El avance queda persistido y las referencias de evidencias quedan asociadas al registro. | `IllegalArgumentException`; `StorageException`; `DataAccessException`. |
+| `S3StorageService.upload(File): String` | Archivo válido y servicio de almacenamiento disponible. | Retorna la referencia del objeto almacenado. | `StorageException` por timeout, credenciales inválidas o error del proveedor. |
 
-### 11.4 Contratos de interfaz documentados
+El endpoint mantiene el contrato previamente documentado para `POST /api/v1/avances`: requiere `Authorization: Bearer <JWT_TOKEN>` y `Content-Type: application/json`, y contempla respuestas `201`, `400`, `401`, `403` y `500/503` según el resultado de la operación.
 
-A continuación, se detalla el contrato de la API REST (Endpoint) que consume la aplicación móvil para registrar un avance.
+#### 11.1.3 Análisis de robustez
 
-*   **Endpoint:** `POST /api/v1/avances`
-*   **Descripción:** Permite a un usuario autenticado registrar un nuevo avance de obra asociando evidencias fotográficas.
-*   **Headers requeridos:**
-    *   `Authorization: Bearer <JWT_TOKEN>`
-    *   `Content-Type: application/json`
+| Objeto | Tipo (Boundary / Control / Entity) | Responsabilidad |
+|---|---|---|
+| `AvanceController` | Boundary | Recibir la petición HTTP, validar el payload y traducir el resultado a códigos HTTP. |
+| `AvanceRequest` | Boundary / DTO | Transportar los datos recibidos desde la aplicación móvil. |
+| `AvanceService` | Control | Coordinar validaciones, almacenamiento de evidencias y persistencia del avance. |
+| `S3StorageService` | Control / Adapter | Aislar la integración con el almacenamiento de objetos. |
+| `AvanceRepository` | Control / Persistence Gateway | Proporcionar el acceso a PostgreSQL mediante Spring Data JPA. |
+| `Avance` | Entity | Mantener el estado persistente del avance y sus referencias a evidencias. |
 
-**Request Body (JSON):**
+El diseño contempla tres condiciones de error principales. Si PostgreSQL no está disponible, el backend responde `503` y el cliente conserva el registro para reintento. Si el almacenamiento de evidencias falla, se evita confirmar la operación incompleta y se retorna un error de servicio. Si el payload es inválido, `AvanceController` rechaza la solicitud con `400` antes de acceder a la persistencia.
 
-```json
-{
-  "proyectoId": "550e8400-e29b-41d4-a716-446655440000",
-  "usuarioId": "123e4567-e89b-12d3-a456-426614174000",
-  "descripcion": "Fundición de losas del segundo nivel sector A.",
-  "porcentajeCompletado": 15.5,
-  "fechaRegistro": "2026-07-28T14:30:00Z",
-  "evidenciasBase64": [
-    "iVBORw0KGgoAAAANSUhEUgAA...", 
-    "R0lGODlhAQABAIAAAAAAAP..."
-  ]
-}
-```
-*(Nota: Para optimizar la sincronización diferida, las imágenes se envían codificadas en Base64 en el payload o mediante una arquitectura multipart/form-data según la configuración del cliente).*
+#### 11.1.4 Diagrama de secuencia — flujo principal detallado
 
-**Respuestas esperadas:**
+**Figura 6 — Diagrama de flujo en Caso Exitoso de Registro de Avance de Obra.**
+![Diagrama de flujo en Caso Exitoso de Registro de Avance de Obra](../diagramas/diagrama_secuencia_resgitro_avance_obra_caso_exitoso.png)
 
-| Código HTTP | Significado | Estructura del Response (Ejemplo) |
-| :--- | :--- | :--- |
-| **201 Created** | Avance registrado y evidencias subidas exitosamente. | `{ "mensaje": "Avance registrado con éxito", "avanceId": "uuid" }` |
-| **400 Bad Request** | Faltan campos obligatorios o formatos incorrectos. | `{ "error": "BAD_REQUEST", "detalles": ["descripcion es requerida"] }` |
-| **401 Unauthorized** | El token JWT no existe, está mal formado o ha expirado. | `{ "error": "UNAUTHORIZED", "mensaje": "Token inválido o expirado" }` |
-| **403 Forbidden** | El usuario autenticado no tiene el rol necesario en este proyecto. | `{ "error": "FORBIDDEN", "mensaje": "No tiene permisos en este proyecto" }` |
-| **500 / 503** | Error interno del servidor o pérdida de conexión con PostgreSQL/S3. | `{ "error": "SERVICE_UNAVAILABLE", "mensaje": "Error temporal guardando el registro" }` |
+**Camino de error:** si la validación falla, `AvanceController` retorna `400` sin ejecutar persistencia. Si falla PostgreSQL, `AvanceService` no confirma el registro y el cliente mantiene la información para reintentar. Si falla el almacenamiento de evidencias, la operación no se considera exitosa y se devuelve un error de servicio.
+
+**Figura 7 — Diagrama de flujo en Caso de Error de Registro de Avance de Obra.**
+![Diagrama de flujo en Caso Exitoso de Registro de Avance de Obra](../diagramas/diagrama_secuencia_resgitro_avance_obra_caso_error.png)
+
+
+
+### Componente 2 — Sincronización de Información
+
+**Responsabilidad:** Gestionar el envío diferido de registros generados en campo hacia la API REST cuando se restablece la conectividad, evitando pérdida de información y controlando el estado de sincronización.
+
+**Trazabilidad:** CU1: Registrar avances de obra, CU2: Reportar avances diarios, CU3: Actualizar estado de tareas → Aplicación Móvil / módulo de sincronización, relacionado con la API REST en la vista de estructura interna y con ADR-005.
+
+#### 11.2.1 Diagrama de clases de diseño
+
+**Figura 8 — Diagrama de clases de Sincronización de Información.**
+![Diagrama de clases de Sincronización de Información](../diagramas/diagrama_sincronizacion_informacion.png)
+
+
+La separación entre `SyncService`, `SyncRepository` y `ApiClient` permite que la lógica de sincronización no dependa directamente del almacenamiento local ni del protocolo HTTP. `SyncStrategy` encapsula la política de resolución de conflictos. La estrategia definida para el alcance actual consiste en detectar el conflicto, conservar la información y marcar el registro como **conflicto pendiente** para resolución manual, tal como establece QS-02.
+
+#### 11.2.2 Contratos de interfaz
+
+| Método / Endpoint | Precondición | Postcondición | Excepciones |
+|---|---|---|---|
+| `SyncService.syncPendingRecords(): SyncResult` | Existen cero o más registros locales pendientes; la aplicación puede ejecutarse aunque no exista conexión. | Cada registro enviado exitosamente queda marcado como sincronizado; los conflictos quedan marcados como pendientes. | `SyncTransportException`; `AuthenticationException`; `ConflictDetectedException`. |
+| `SyncService.syncRecord(SyncRecord): SyncStatus` | Registro local válido y en estado pendiente. | El registro pasa a `SYNCED`, `CONFLICT` o permanece `PENDING` según el resultado. | Error de transporte o respuesta inválida del servidor. |
+| `POST /api/v1/sync` | JWT válido y lote de registros correctamente formado. | La API valida y procesa el lote, devolviendo el resultado de cada registro. | `400`, `401`, `409` por conflicto o `503` por indisponibilidad temporal. |
+| `SyncRepository.markSynced(UUID): void` | El registro existe y pertenece a la cola local. | El registro queda marcado como sincronizado y no vuelve a enviarse automáticamente. | `IllegalStateException` si el registro no existe o ya fue procesado. |
+
+#### 11.2.3 Análisis de robustez
+
+| Objeto | Tipo (Boundary / Control / Entity) | Responsabilidad |
+|---|---|---|
+| `SyncController` | Boundary | Iniciar el proceso de sincronización y exponer su resultado al cliente. |
+| `SyncService` | Control | Coordinar lectura de pendientes, envío, detección de conflictos y actualización de estados. |
+| `ApiClient` | Boundary / Adapter | Comunicar la aplicación móvil con la API REST. |
+| `SyncRepository` | Control / Persistence Gateway | Leer y actualizar la cola local de registros pendientes. |
+| `SyncStrategy` | Control | Encapsular la política de resolución de conflictos. |
+| `SyncRecord` | Entity | Representar un cambio local y su estado de sincronización. |
+
+La robustez se basa en no marcar un registro como sincronizado hasta recibir confirmación del servidor. Ante una interrupción de red, el registro permanece `PENDING`; ante un conflicto, pasa a `CONFLICT` y conserva la trazabilidad para resolución manual. Esto permite mantener la disponibilidad en campo sin sacrificar el control de consistencia.
+
+#### 11.2.4 Diagrama de secuencia — flujo principal
+
+**Figura 9 — Diagrama de flujo de Sincronización de Información caso exitoso.**
+![Diagrama de clases de Sincronización de Información](../diagramas/diagrama_sincronizacion_informacion_caso_exitoso.png)
+
+**Camino de error — conflicto:**
+
+**Figura 10 — Diagrama de flujo de Sincronización de Información caso de error.**
+![Diagrama de clases de Sincronización de Información](../diagramas/diagrama_sincronizacion_informacion_caso_exitoso.png)
+
+### Componente 3 — Autenticación y Autorización
+
+**Responsabilidad:** Autenticar usuarios de la plataforma y controlar el acceso a recursos según el rol asignado, protegiendo las operaciones realizadas desde las aplicaciones web y móvil.
+
+**Trazabilidad:** CU1: Registrar avances de obra, CU3: Supervisar tareas, CU5: Solicitar materiales, además de los casos de uso administrativos que requieren acceso según rol → API REST / módulo de autenticación y autorización, relacionado con ADR-006.
+
+#### 11.3.1 Diagrama de clases de diseño
+
+**Figura 11 — Diagrama de clases de diseño del componente Autenticación y Autorización.**
+![Diagrama de clases de Autenticación y Autorización](../diagramas/diagrama_autenticacion_autorizacion.png)
+
+El componente aplica la decisión documentada en ADR-006: JWT para autenticación sin estado y RBAC para autorización. `AuthController` recibe las credenciales; `AuthService` coordina la autenticación; `JwtTokenService` administra la emisión y validación del token; `JwtAuthenticationFilter` intercepta las solicitudes protegidas; y `AuthorizationService` verifica que el rol del usuario tenga permiso sobre el recurso solicitado.
+
+#### 11.3.2 Contratos de interfaz
+
+| Método / Endpoint | Precondición | Postcondición | Excepciones |
+|---|---|---|---|
+| `POST /api/v1/auth/login` | Usuario registrado y credenciales recibidas en formato válido. | Se retorna un JWT válido y la información básica del usuario autenticado. | `400` por request inválido; `401` por credenciales incorrectas. |
+| `AuthService.authenticate(LoginRequest): TokenResponse` | Username y contraseña presentes. | Usuario autenticado y token JWT generado con su rol. | `AuthenticationException` si las credenciales no son válidas. |
+| `JwtTokenService.validate(String): AuthenticatedUser` | Token con estructura válida. | Retorna identidad y rol si el token es válido y no ha expirado. | `InvalidTokenException` por token inválido o expirado. |
+| `AuthorizationService.hasPermission(User, String, String): boolean` | Usuario autenticado y recurso identificado. | Retorna `true` únicamente cuando el rol permite ejecutar la acción solicitada. | `AccessDeniedException` cuando la política rechaza la operación. |
+
+#### 11.3.3 Análisis de robustez
+
+| Objeto | Tipo (Boundary / Control / Entity) | Responsabilidad |
+|---|---|---|
+| `AuthController` | Boundary | Recibir las credenciales y devolver la respuesta HTTP correspondiente. |
+| `JwtAuthenticationFilter` | Boundary | Interceptar solicitudes protegidas y extraer el JWT. |
+| `AuthService` | Control | Coordinar búsqueda del usuario, validación de credenciales y generación del token. |
+| `JwtTokenService` | Control | Crear y validar tokens JWT. |
+| `AuthorizationService` | Control | Aplicar las reglas RBAC para autorizar acciones. |
+| `UserRepository` | Control / Persistence Gateway | Recuperar información de usuarios desde PostgreSQL. |
+| `User` | Entity | Representar al usuario y su rol persistente. |
+
+El componente rechaza solicitudes sin credenciales válidas antes de ejecutar operaciones protegidas. Un token inválido o expirado genera `401`; un usuario autenticado pero sin permisos suficientes genera `403`. Esta separación permite distinguir autenticación de autorización y mantiene las reglas de acceso centralizadas en el backend.
+
+#### 11.3.4 Diagrama de secuencia — flujo principal
+
+**Figura 12 — Diagrama de clases de diseño del componente Autenticación y Autorización.**
+![Diagrama de flujo de Autenticación y Autorización caso exitoso](../diagramas/diagrama_autenticacion_autorizacion_caso_exitoso.png)
+
+**Camino de error — token inválido:**
+
+**Figura 13 — Diagrama de clases de diseño del componente Autenticación y Autorización.**
+![Diagrama de flujo de Autenticación y Autorización caso error](../diagramas/diagrama_autenticacion_autorizacion_caso_error.png)
+
+
+---
+
+## 12. Patrones de diseño aplicados
+
+Los patrones seleccionados se aplican sobre problemas concretos identificados en el diseño. No se utilizan como elementos decorativos: cada uno reduce un acoplamiento o encapsula una decisión que podría cambiar con la evolución del sistema.
+
+### Patrón 1 — Adapter
+
+| Campo | Detalle |
+|---|---|
+| **Categoría** | Estructural |
+| **Ubicación en el sistema** | `S3StorageService`, dentro del componente Registro de Avance de Obra (sección 11.1). |
+| **Problema que resuelve** | El módulo de avances necesita almacenar fotografías en un servicio externo compatible con S3 sin acoplar la lógica de negocio a la API concreta del proveedor. |
+| **Alternativa considerada** | Invocar directamente el SDK de Amazon S3 desde `AvanceService`. |
+| **Por qué el patrón y no la alternativa** | El adaptador concentra la dependencia externa en una sola clase. Así, `AvanceService` trabaja con una interfaz estable y el proveedor puede sustituirse o modificarse sin alterar la lógica principal del registro de avances. |
+
+**Figura 14 — Aplicación del patrón Adapter para el almacenamiento de evidencias.**
+![Diagrama Aplicación del patrón Adapter](../diagramas/diagrama_patron_adapter.png)
+
+
+### Patrón 2 — Repository
+
+| Campo | Detalle |
+|---|---|
+| **Categoría** | Estructural / Persistencia |
+| **Ubicación en el sistema** | `AvanceRepository` y `SyncRepository`, en los componentes Registro de Avance y Sincronización. |
+| **Problema que resuelve** | Separar la lógica de negocio del acceso directo a PostgreSQL y del detalle de persistencia utilizado por Spring Data JPA. |
+| **Alternativa considerada** | Ejecutar consultas SQL o llamadas JPA directamente desde los servicios de negocio. |
+| **Por qué el patrón y no la alternativa** | El repositorio establece una frontera clara para la persistencia. Esto reduce el acoplamiento entre servicios y tecnología de almacenamiento y facilita pruebas y cambios futuros del mecanismo de acceso a datos. |
+
+**Figura 15 — Aplicación del patrón Repository para la persistencia.**
+![Diagrama Aplicación del patrón Repository](../diagramas/diagrama_patron_repository.png)
+
+### Patrón 3 — Strategy
+
+| Campo | Detalle |
+|---|---|
+| **Categoría** | Comportamiento |
+| **Ubicación en el sistema** | `SyncStrategy` dentro del componente Sincronización de Información (sección 11.2). |
+| **Problema que resuelve** | La sincronización puede requerir diferentes políticas de resolución cuando el registro local y el registro del servidor presentan cambios incompatibles. |
+| **Alternativa considerada** | Colocar toda la lógica de resolución mediante condicionales dentro de `SyncService`. |
+| **Por qué el patrón y no la alternativa** | Strategy permite encapsular la política de resolución y cambiarla sin modificar el flujo principal de sincronización. Para el alcance actual se utiliza `ManualConflictStrategy`, que marca el conflicto como pendiente y conserva la trazabilidad. |
+
+**Figura 16 — Aplicación del patrón Strategy para la política de resolución de conflictos.**
+![Diagrama Aplicación del patrón Strategy](../diagramas/diagrama_patron_strategy.png)
+
+---
+
+## 13. Principios y técnicas habilitadoras — evidencia
+
+| Principio | Evidencia en el diseño | Referencia | Tensión con otro principio |
+|---|---|---|---|
+| **Separación de responsabilidades (SoC)** | `AvanceController`, `AvanceService`, `AvanceRepository` y `S3StorageService` tienen responsabilidades separadas. El controlador no accede directamente a PostgreSQL ni al almacenamiento de objetos. | Sección 11.1.1 | Puede aumentar el número de clases, pero se acepta para reducir acoplamiento. |
+| **Alta cohesión y bajo acoplamiento** | Los adaptadores de almacenamiento y repositorios aíslan las dependencias externas de la lógica de negocio. | Secciones 11.1.1, 12.1 y 12.2 | La introducción de interfaces agrega abstracción, pero permite cambios localizados. |
+| **Diseño para el cambio** | `StorageService` permite cambiar el proveedor de almacenamiento y `SyncStrategy` permite cambiar la política de resolución de conflictos. | Secciones 11.1, 11.2 y 12 | Tensiona con KISS porque incorpora abstracciones adicionales; se justifican en puntos donde existe una variabilidad real. |
+| **DRY** | La autenticación, autorización y validación se centralizan en el backend y son utilizadas por los clientes web y móvil mediante la misma API REST. | Sección 11.3 y ADR-002 / ADR-006 | La centralización crea dependencia de la API, aceptada por consistencia. |
+| **KISS** | Se mantiene una arquitectura monolítica modular y se evitan microservicios para el alcance actual. | Sección 8 y ADR-001 | Puede limitar el escalamiento independiente, pero reduce complejidad operacional. |
+| **Defensa en profundidad** | Las solicitudes protegidas requieren JWT y posteriormente se verifica el rol antes de acceder al recurso. | Sección 11.3 y ADR-006 | Las validaciones adicionales agregan procesamiento, pero son necesarias para QS-04. |
+| **Principio de menor privilegio (PoLA)** | `AuthorizationService` concede acceso según el rol del usuario y rechaza acciones no autorizadas. | Sección 11.3.1 y ADR-006 | La granularidad actual está limitada al modelo RBAC definido para el proyecto. |
+| **Diseño orientado a la resiliencia** | La cola local mantiene registros pendientes y solamente los marca como sincronizados después de recibir confirmación del servidor. | Sección 11.2.3, QS-01 y QS-05 | La operación offline introduce eventualidad y posibles conflictos, aceptados para preservar disponibilidad. |
+
+### Trazabilidad resumida del diseño
+
+| Caso de uso / driver | Componente | Patrón / decisión relacionada | Atributo de calidad |
+|---|---|---|---|
+| CU1 Registrar avances de obra | Registro de Avance | Adapter, Repository, ADR-004 | Consistencia, trazabilidad, seguridad |
+| CU4 Adjuntar evidencia fotográfica | Registro de Avance | Adapter, ADR-004 | Resiliencia, trazabilidad |
+| CU1 / CU2 Registrar avances en campo | Sincronización | Strategy, ADR-005 | Disponibilidad, consistencia |
+| CU3 Supervisar tareas | Autenticación y Autorización | JWT + RBAC, ADR-006 | Seguridad, trazabilidad |
+| Operación con conectividad intermitente | Sincronización | Cola local + sincronización diferida | Disponibilidad, resiliencia |
+
+El diseño detallado mantiene la relación entre los casos de uso, los componentes de la vista de estructura interna, los escenarios de calidad y las decisiones arquitectónicas. De esta forma, el Bloque 5 no introduce componentes aislados, sino que concreta las decisiones tomadas previamente para resolver el problema central de operación en campo, sincronización, consistencia, manejo de evidencias y control de acceso.

@@ -1,0 +1,19 @@
+classDiagram
+    class AvanceService {
+        +crearAvance(request) AvanceResponse
+    }
+    class StorageService {
+        <<interface>>
+        +upload(file) String
+        +delete(key) void
+    }
+    class S3StorageService {
+        +upload(file) String
+        +delete(key) void
+    }
+    class S3Client {
+        +putObject(file) String
+    }
+    AvanceService --> StorageService
+    StorageService <|.. S3StorageService
+    S3StorageService --> S3Client

@@ -1,0 +1,18 @@
+sequenceDiagram
+    participant Mobile as Aplicación Móvil
+    participant Sync as SyncService
+    participant Local as SyncRepository
+    participant API as API REST
+    participant DB as PostgreSQL
+
+    Mobile->>Sync: syncPendingRecords()
+    Sync->>Local: findPending()
+    Local-->>Sync: registros pendientes
+    loop Por cada registro
+        Sync->>API: POST /api/v1/sync
+        API->>DB: Validar y persistir cambio
+        DB-->>API: Confirmación
+        API-->>Sync: 200/201
+        Sync->>Local: markSynced(localId)
+    end
+    Sync-->>Mobile: SyncResult
