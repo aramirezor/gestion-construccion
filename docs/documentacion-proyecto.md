@@ -113,9 +113,9 @@ Control de Versiones
      - 15.2.1 Modelo de Concurrencia
      - 15.2.2 Recursos Compartidos y Sincronización
      - 15.2.3 Manejo de Condiciones de Carrera
-   - 15.5 Sistemas con Seguridad Crítica
-     - 15.5.1 Modelo de Amenazas (STRIDE Simplificado)
-     - 15.5.2 Controles por Capa
+   - 15.3 Sistemas con Seguridad Crítica
+     - 15.3.1 Modelo de Amenazas (STRIDE Simplificado)
+     - 15.3.2 Controles por Capa
 
 16. Tendencias y Evolución del Diseño
 
@@ -381,6 +381,9 @@ La resolución de este desafío constituye el principal eje arquitectónico del 
 
 ## 8\. Vistas arquitectónicas
 
+**Evolución Arquitectónica (S07 a S14)**
+Desde la propuesta inicial (S07), la arquitectura ha evolucionado para responder al desafío crítico de la conectividad intermitente. Originalmente, el sistema dependía de una conexión síncrona hacia la API. Sin embargo, para cumplir con el escenario de disponibilidad (QS-01), se reestructuró la aplicación móvil incorporando un repositorio local y un motor de sincronización asíncrona. Asimismo, se extrajo la responsabilidad del manejo de imágenes desde PostgreSQL hacia un servicio de almacenamiento de objetos externo (S3) mediante un patrón Adapter, optimizando el rendimiento y garantizando el escenario de resiliencia (QS-05).
+
 ### 8.1 Vista de contexto
 
 **Figura 1. Vista de contexto de la Plataforma de Gestión de Construcción**
@@ -403,7 +406,6 @@ Para representar la estructura interna de la Plataforma de Gestión de Construcc
 
 La vista facilita analizar cómo se distribuye la lógica del sistema entre las aplicaciones cliente, el backend y los mecanismos de persistencia, sirviendo como base para las decisiones arquitectónicas y los diagramas de comportamiento presentados en las secciones posteriores.
 
-
 **Figura 2. Vista de estructura interna de la Plataforma de Gestión de Construcción**
 ![Diagrama - Vista de Estructura Interna](../diagramas/C4%20Modelo%20%E2%80%93%20Nivel%202.png)
 
@@ -413,7 +415,6 @@ La solución está conformada por cinco contenedores principales. La Aplicación
 
 La información estructurada se almacena en una base de datos PostgreSQL, mientras que las fotografías y demás evidencias se gestionan mediante un Servicio de Almacenamiento de Objetos. Esta separación de responsabilidades favorece la mantenibilidad, escalabilidad y evolución del sistema.
 
-
 | Elemento | Tipo | Responsabilidad | Tecnología | Interfaces expuestas | Dependencias |
 |----------|------|-----------------|------------|----------------------|--------------|
 | Aplicación Web | Contenedor | Proporciona la interfaz para administradores de proyecto, arquitectos e ingenieros. Permite gestionar proyectos, cronogramas, tareas, inventario, compras y consultar reportes del sistema. | React | REST sobre HTTPS | API REST |
@@ -421,6 +422,30 @@ La información estructurada se almacena en una base de datos PostgreSQL, mientr
 | API REST | Contenedor | Centraliza la lógica de negocio del sistema. Gestiona autenticación, autorización, proyectos, cronogramas, inventario, compras, reportes y la persistencia de la información. | Spring Boot (Java 21) | Endpoints REST (`/api/v1/*`) | PostgreSQL y Servicio de Almacenamiento de Objetos |
 | Base de Datos | Base de datos | Almacena la información persistente del sistema: usuarios, proyectos, tareas, cronogramas, inventario, compras y registros históricos. | PostgreSQL | JDBC | API REST |
 | Servicio de Almacenamiento de Objetos | Sistema externo | Almacena fotografías y documentos asociados a los proyectos. La base de datos conserva únicamente las referencias a dichos archivos. | Compatible con S3 | HTTPS | API REST |
+
+
+#### 8.2.1 Vista de Componentes (Nivel 3) — API REST: Módulo de Avances
+Esta vista desglosa internamente el contenedor "API REST" para el registro de avances, mostrando cómo se dividen las responsabilidades.
+
+| Componente | Responsabilidad | Dependencias (Hacia dónde apunta) |
+| :--- | :--- | :--- |
+| **AvanceController** | Recibe peticiones HTTP, valida el payload y delega la ejecución. | `AvanceService` |
+| **AvanceService** | Orquesta la lógica de negocio, validaciones y guardado. | `AvanceRepository`, `S3StorageService` |
+| **AvanceRepository** | Maneja la persistencia transaccional en PostgreSQL. | Base de Datos (PostgreSQL) |
+| **S3StorageService** | Adapta la comunicación con el servicio de almacenamiento externo. | Almacenamiento de Objetos (S3) |
+
+
+#### 8.2.2 Vista de Componentes (Nivel 3) — Aplicación Móvil: Módulo de Sincronización
+La siguiente vista tabular desglosa el contenedor "Aplicación Móvil" para evidenciar los componentes encargados de gestionar el trabajo offline y la sincronización:
+
+| Componente | Responsabilidad | Dependencias |
+| :--- | :--- | :--- |
+| **SyncController** | Inicia el proceso de sincronización en background o manual. | `SyncService` |
+| **SyncService** | Lee pendientes locales, envía datos y maneja conflictos. | `SyncRepository`, `ApiClient`, `SyncStrategy` |
+| **SyncRepository** | Administra la cola local de registros SQLite/Room. | Almacenamiento Local (Dispositivo) |
+| **ApiClient** | Cliente HTTP que envía la carga útil al servidor. | API REST (Backend) |
+| **ManualConflictStrategy**| Define qué hacer al detectar un conflicto (estado CONFLICT). | Ninguna |
+
 
 ### 8.3 Vista de comportamiento
 
@@ -789,7 +814,7 @@ El diseño contempla tres condiciones de error principales. Si PostgreSQL no est
 **Camino de error:** si la validación falla, `AvanceController` retorna `400` sin ejecutar persistencia. Si falla PostgreSQL, `AvanceService` no confirma el registro y el cliente mantiene la información para reintentar. Si falla el almacenamiento de evidencias, la operación no se considera exitosa y se devuelve un error de servicio.
 
 **Figura 7 — Diagrama de flujo en Caso de Error de Registro de Avance de Obra.**
-![Diagrama de flujo en Caso Exitoso de Registro de Avance de Obra](../diagramas/diagrama_secuencia_resgitro_avance_obra_caso_error.png)
+![Diagrama de flujo en Caso de Error de Registro de Avance de Obra](../diagramas/diagrama_secuencia_resgitro_avance_obra_caso_error.png)
 
 
 
@@ -832,12 +857,12 @@ La robustez se basa en no marcar un registro como sincronizado hasta recibir con
 #### 11.2.4 Diagrama de secuencia — flujo principal
 
 **Figura 9 — Diagrama de flujo de Sincronización de Información caso exitoso.**
-![Diagrama de clases de Sincronización de Información](../diagramas/diagrama_sincronizacion_informacion_caso_exitoso.png)
+![Diagrama de flujo de Sincronización de Información caso exitoso](../diagramas/diagrama_sincronizacion_informacion_caso_exitoso.png)
 
 **Camino de error — conflicto:**
 
 **Figura 10 — Diagrama de flujo de Sincronización de Información caso de error.**
-![Diagrama de clases de Sincronización de Información](../diagramas/diagrama_sincronizacion_informacion_caso_exitoso.png)
+![Diagrama de flujo de Sincronización de Información caso de error](../diagramas/diagrama_sincronizacion_informacion_caso_exitoso.png)
 
 ### Componente 3 — Autenticación y Autorización
 
@@ -934,18 +959,18 @@ Los patrones seleccionados se aplican sobre problemas concretos identificados en
 
 ---
 
-## 13. Principios y técnicas habilitadoras — evidencia
+## 13. Principios y Técnicas Habilitadoras — Evidencia
 
-| Principio | Evidencia en el diseño | Referencia | Tensión con otro principio |
-|---|---|---|---|
-| **Separación de responsabilidades (SoC)** | `AvanceController`, `AvanceService`, `AvanceRepository` y `S3StorageService` tienen responsabilidades separadas. El controlador no accede directamente a PostgreSQL ni al almacenamiento de objetos. | Sección 11.1.1 | Puede aumentar el número de clases, pero se acepta para reducir acoplamiento. |
-| **Alta cohesión y bajo acoplamiento** | Los adaptadores de almacenamiento y repositorios aíslan las dependencias externas de la lógica de negocio. | Secciones 11.1.1, 12.1 y 12.2 | La introducción de interfaces agrega abstracción, pero permite cambios localizados. |
-| **Diseño para el cambio** | `StorageService` permite cambiar el proveedor de almacenamiento y `SyncStrategy` permite cambiar la política de resolución de conflictos. | Secciones 11.1, 11.2 y 12 | Tensiona con KISS porque incorpora abstracciones adicionales; se justifican en puntos donde existe una variabilidad real. |
-| **DRY** | La autenticación, autorización y validación se centralizan en el backend y son utilizadas por los clientes web y móvil mediante la misma API REST. | Sección 11.3 y ADR-002 / ADR-006 | La centralización crea dependencia de la API, aceptada por consistencia. |
-| **KISS** | Se mantiene una arquitectura monolítica modular y se evitan microservicios para el alcance actual. | Sección 8 y ADR-001 | Puede limitar el escalamiento independiente, pero reduce complejidad operacional. |
-| **Defensa en profundidad** | Las solicitudes protegidas requieren JWT y posteriormente se verifica el rol antes de acceder al recurso. | Sección 11.3 y ADR-006 | Las validaciones adicionales agregan procesamiento, pero son necesarias para QS-04. |
-| **Principio de menor privilegio (PoLA)** | `AuthorizationService` concede acceso según el rol del usuario y rechaza acciones no autorizadas. | Sección 11.3.1 y ADR-006 | La granularidad actual está limitada al modelo RBAC definido para el proyecto. |
-| **Diseño orientado a la resiliencia** | La cola local mantiene registros pendientes y solamente los marca como sincronizados después de recibir confirmación del servidor. | Sección 11.2.3, QS-01 y QS-05 | La operación offline introduce eventualidad y posibles conflictos, aceptados para preservar disponibilidad. |
+El diseño de la solución se fundamenta en los principios **SOLID** y técnicas arquitectónicas orientadas a la mantenibilidad y resiliencia.
+
+| Principio | Evidencia específica en el diseño | Tensión con otro principio |
+| :--- | :--- | :--- |
+| **Single Responsibility (SRP)** | En la **Figura 5**, `AvanceController` se encarga exclusivamente de la capa HTTP, mientras que `AvanceService` maneja la regla de negocio y `S3StorageService` la transferencia de archivos. | Aumenta la cantidad de clases, tensionando con la simplicidad (KISS). |
+| **Open/Closed (OCP)** | En la **Figura 8**, el motor de sincronización (`SyncService`) está abierto a extensión mediante la interfaz `SyncStrategy`, permitiendo agregar nuevas políticas (ej. *AutoResolveStrategy*) sin modificar la clase base. | Incrementa la abstracción frente al uso de simples condicionales. |
+| **Liskov Substitution (LSP)** & **Interface Segregation (ISP)** | En la **Figura 14**, el componente de avances depende de la interfaz general `StorageService`. Cualquier implementación (como `S3StorageService`) puede sustituirla sin alterar el contrato de la interfaz, la cual es pequeña y enfocada (solo contiene el método `upload`). | Ninguna significativa; mejora directamente la cohesión. |
+| **Dependency Inversion (DIP)** | En la **Figura 15**, `AvanceService` (alto nivel) no depende directamente de PostgreSQL (bajo nivel), sino de la abstracción `AvanceRepository`. | Requiere configuración de inyección de dependencias en el framework (Spring). |
+| **Separación de Responsabilidades (SoC) / DRY** | Centralización de la validación de tokens en `JwtAuthenticationFilter` (**Figura 11**), evitando duplicar código de seguridad en cada controlador de la API. | La centralización crea dependencia de la API (Single Point of Failure). |
+| **Diseño orientado a la resiliencia** | La cola local (`SyncRepository`, **Figura 8**) mantiene operaciones en estado `PENDING` hasta recibir el *200 OK* del servidor, protegiendo contra pérdida de datos. | Tensión con la consistencia inmediata (QS-02), aceptada para favorecer la disponibilidad (QS-01). |
 
 ### Trazabilidad resumida del diseño
 
@@ -1000,6 +1025,7 @@ La evaluación de cohesión y acoplamiento se realiza sobre los tres componentes
 | **Registro de Avance de Obra** | Alta | Medio | Las responsabilidades están concentradas en el registro de avances y la asociación de evidencias. Las dependencias hacia PostgreSQL y el almacenamiento de objetos están aisladas mediante `AvanceRepository` y `S3StorageService`. |
 | **Sincronización de Información** | Alta | Medio | `SyncService` coordina la sincronización, mientras `SyncRepository`, `ApiClient` y `SyncStrategy` mantienen responsabilidades diferenciadas. Existen dependencias hacia almacenamiento local y API REST, pero se encuentran encapsuladas. |
 | **Autenticación y Autorización** | Alta | Medio | La autenticación, validación de tokens y autorización están separadas entre `AuthService`, `JwtTokenService`, `JwtAuthenticationFilter` y `AuthorizationService`. La dependencia hacia usuarios persistidos se mantiene mediante `UserRepository`. |
+
 
 En los tres componentes se busca mantener alta cohesión, agrupando responsabilidades relacionadas dentro de cada componente, y acoplamiento moderado, aislando dependencias externas mediante interfaces y patrones de diseño.
 
@@ -1224,3 +1250,19 @@ De esta manera, la arquitectura puede evolucionar progresivamente sin abandonar 
 | **QS (Quality Scenario)** | Escenario de calidad utilizado para expresar de manera verificable una expectativa arquitectónica, como disponibilidad, consistencia, trazabilidad, seguridad o resiliencia. |
 
 
+18. Referencias
+Asamblea Legislativa de la República de Costa Rica. (2011, 7 de julio). Ley N.º 8968: Protección de la persona frente al tratamiento de sus datos personales. Sistema Costarricense de Información Jurídica. https://www.pgrweb.go.cr/scij/
+
+Brown, S. (2018). Software Architecture for Developers: Visualise, document and explore your software architecture. Leanpub..
+
+Fowler, M. (2015, 26 de agosto). MonolithFirst. MartinFowler.com. https://martinfowler.com/bliki/MonolithFirst.html.
+
+Gamma, E., Helm, R., Johnson, R., & Vlissides, J. (1994). Design Patterns: Elements of Reusable Object-Oriented Software. Addison-Wesley Professional.
+
+Internet Engineering Task Force (IETF). (2015). JSON Web Token (JWT) (RFC 7519). https://datatracker.ietf.org/doc/html/rfc7519.
+
+Richards, M., & Ford, N. (2020). Fundamentals of Software Architecture: An Engineering Approach. O'Reilly Media.
+
+Spring Framework Contributors. (2026). Spring Boot Reference Documentation. Spring. https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/
+
+The PostgreSQL Global Development Group. (2026). PostgreSQL Documentation. https://www.postgresql.org/docs/.
