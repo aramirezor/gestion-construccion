@@ -1250,7 +1250,8 @@ De esta manera, la arquitectura puede evolucionar progresivamente sin abandonar 
 | **QS (Quality Scenario)** | Escenario de calidad utilizado para expresar de manera verificable una expectativa arquitectónica, como disponibilidad, consistencia, trazabilidad, seguridad o resiliencia. |
 
 
-18. Referencias
+## 18. Referencias
+
 Asamblea Legislativa de la República de Costa Rica. (2011, 7 de julio). Ley N.º 8968: Protección de la persona frente al tratamiento de sus datos personales. Sistema Costarricense de Información Jurídica. https://www.pgrweb.go.cr/scij/
 
 Brown, S. (2018). Software Architecture for Developers: Visualise, document and explore your software architecture. Leanpub..
