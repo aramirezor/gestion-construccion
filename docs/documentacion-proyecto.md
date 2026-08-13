@@ -16,8 +16,8 @@ Maestría Profesional en Ingeniería del Software
 | URL del repositorio | https://github.com/aramirezor/gestion-construccion.git |
 | Docente | Juan Mauricio Leandro |
 | Cuatrimestre | 2026 — II Cuatrimestre |
-| Versión del documento | 0.5 — Avance 2 |
-| Fecha de última actualización | 2026-07-26 |
+| Versión del documento | 1.0 — Entrega final |
+| Fecha de última actualización | 2026-08-10 |
 
 San José, Costa Rica 2026
 
@@ -30,6 +30,8 @@ Control de Versiones
 | 0.3 | 2026-06-28 | Avance 1 (S07) - Correcciones | Profundización del problema arquitectónico central (operación offline, política de conflictos y priorización de sincronización); ampliación de stakeholders (Cliente, Bodega, Proveedores); ajuste técnico de drivers arquitectónicos; redefinición de escenarios de calidad con métricas verificables y adición de escenario de resiliencia para fotografías; optimización de la vista de contexto. | Andrés José Ramírez Ortega María José Hernández López Braulio Rivera Espinoza Valery Carvajal Oreamuno |
 | 0.4 | 2026-06-28 | Avance 1 (S07) - Ajustes finales | Reestructuración del documento para mantener consistencia con el alcance del avance; fortalecimiento de la lógica y coherencia entre las secciones; refinamiento de la descripción del sistema, drivers arquitectónicos, escenarios de calidad y vista de contexto; eliminación de secciones no desarrolladas y corrección de numeración, formato y redacción general. | Andrés José Ramírez Ortega María José Hernández López Braulio Rivera Espinoza Valery Carvajal Oreamuno |
 | 0.5 | 2026-07-26 | Avance 2 (S11) | Incorporación de la vista de estructura interna y la vista de comportamiento; definición del estilo arquitectónico y análisis de sus trade-offs; documentación del registro de decisiones arquitectónicas (ADR); diseño detallado del componente de Registro de Avances (diagrama de clases, robustez y contrato de interfaz); revisión y actualización general del documento para mantener la consistencia entre las vistas, los escenarios de calidad y las decisiones de diseño. | Andrés José Ramírez Ortega María José Hernández López Braulio Rivera Espinoza Valery Carvajal Oreamuno |
+| 1.0 | 2026-08-09 | Entrega final (S14) | Finalización del Bloque 5 — Diseño Detallado: diseño de tres componentes críticos, contratos de interfaz, análisis de robustez, diagramas de secuencia y clases, aplicación de patrones de diseño y evidencia de principios de diseño. | Andrés José Ramírez Ortega, Braulio Rivera Espinoza y Valery Carvajal Oreamuno |
+| 1.1 | 2026-08-10 | Correcciones finales (S14) | Incorporación del análisis de calidad del diseño, secciones específicas para sistemas distribuidos/cloud, sistemas concurrentes y seguridad, análisis de tendencias y evolución del diseño, y glosario. | Andrés José Ramírez Ortega, Braulio Rivera Espinoza y Valery Carvajal Oreamuno |
 |  |  |  |  |  |
 
 # 
@@ -39,6 +41,7 @@ Control de Versiones
 ## Tabla de Contenido
 
 1. Descripción del Sistema y Alcance
+
    - 1.1 Descripción General
    - 1.2 Contexto del Negocio o Dominio
    - 1.3 Alcance del Sistema
@@ -47,6 +50,7 @@ Control de Versiones
 2. Stakeholders
 
 3. Drivers Arquitectónicos
+
    - 3.1 Requerimientos Funcionales Clave
    - 3.2 Atributos de Calidad Prioritarios
    - 3.3 Restricciones que Actúan como Drivers
@@ -60,18 +64,21 @@ Control de Versiones
 7. Principios de Diseño
 
 8. Vistas Arquitectónicas
+
    - 8.1 Vista de contexto
    - 8.2 Vista de estructura interna
    - 8.3 Vista de comportamiento
-      - 8.3.1 Registro de avance de obra
-      - 8.3.2 Sincronización de información
+     - 8.3.1 Registro de avance de obra
+     - 8.3.2 Sincronización de información
 
 9. Estilo Arquitectónico
+
    - 9.1 Estilo adoptado
    - 9.2 Alternativas consideradas y rechazadas
    - 9.3 Análisis de trade-offs del estilo elegido
 
 10. Registro de Decisiones Arquitectónicas (ADR)
+
    - 10.1 ADR-001 – Adopción de una arquitectura monolítica modular
    - 10.2 ADR-002 – Uso de API REST como mecanismo de comunicación entre clientes y backend
    - 10.3 ADR-003 – Selección de PostgreSQL como motor de base de datos
@@ -79,12 +86,47 @@ Control de Versiones
    - 10.5 ADR-005 – Soporte para operación offline mediante sincronización diferida
    - 10.6 ADR-006 – Autenticación basada en JWT y control de acceso por roles
 
-11. Diseño Detallado del Primer Componente: Registro de Avance de Obra
-   - 11.1 Secuencia del flujo principal
-   - 11.2 Diagrama de clases de diseño
-   - 11.3 Análisis de robustez
-   - 11.4 Contratos de interfaz documentados
+11. Diseño Detallado de Componentes
 
+   - 11.1 Registro de Avance de Obra
+   - 11.2 Sincronización de Información
+   - 11.3 Autenticación y Autorización
+
+12. Patrones de Diseño Aplicados
+
+13. Principios y Técnicas Habilitadoras — Evidencia
+
+14. Análisis de Calidad del Diseño
+
+   - 14.1 Validación de Escenarios de Calidad
+   - 14.2 Trade-offs entre Atributos de Calidad
+   - 14.3 Métricas Estimadas de Cohesión y Acoplamiento
+
+15. Secciones Específicas por Tipo de Sistema
+
+   - 15.1 Sistemas Distribuidos / Cloud
+     - 15.1.1 Estrategia de Consistencia
+     - 15.1.2 Modelo CAP Aplicado
+     - 15.1.3 Manejo de Fallos y Resiliencia
+     - 15.1.4 Modelo de Despliegue en Nube
+   - 15.2 Sistemas Concurrentes / Tiempo Real
+     - 15.2.1 Modelo de Concurrencia
+     - 15.2.2 Recursos Compartidos y Sincronización
+     - 15.2.3 Manejo de Condiciones de Carrera
+   - 15.3 Sistemas con Seguridad Crítica
+     - 15.3.1 Modelo de Amenazas (STRIDE Simplificado)
+     - 15.3.2 Controles por Capa
+
+16. Tendencias y Evolución del Diseño
+
+   - 16.1 Tendencias Arquitectónicas Consideradas
+   - 16.2 Evolución hacia Microservicios
+   - 16.3 Puntos de Extensión Futuros
+   - 16.4 Criterios para la Evolución
+
+17. Glosario
+
+18. Referencias
 
 # 1\. Descripción del Sistema y Alcance
 
@@ -339,6 +381,9 @@ La resolución de este desafío constituye el principal eje arquitectónico del 
 
 ## 8\. Vistas arquitectónicas
 
+**Evolución Arquitectónica (S07 a S14)**
+Desde la propuesta inicial (S07), la arquitectura ha evolucionado para responder al desafío crítico de la conectividad intermitente. Originalmente, el sistema dependía de una conexión síncrona hacia la API. Sin embargo, para cumplir con el escenario de disponibilidad (QS-01), se reestructuró la aplicación móvil incorporando un repositorio local y un motor de sincronización asíncrona. Asimismo, se extrajo la responsabilidad del manejo de imágenes desde PostgreSQL hacia un servicio de almacenamiento de objetos externo (S3) mediante un patrón Adapter, optimizando el rendimiento y garantizando el escenario de resiliencia (QS-05).
+
 ### 8.1 Vista de contexto
 
 **Figura 1. Vista de contexto de la Plataforma de Gestión de Construcción**
@@ -361,7 +406,6 @@ Para representar la estructura interna de la Plataforma de Gestión de Construcc
 
 La vista facilita analizar cómo se distribuye la lógica del sistema entre las aplicaciones cliente, el backend y los mecanismos de persistencia, sirviendo como base para las decisiones arquitectónicas y los diagramas de comportamiento presentados en las secciones posteriores.
 
-
 **Figura 2. Vista de estructura interna de la Plataforma de Gestión de Construcción**
 ![Diagrama - Vista de Estructura Interna](../diagramas/C4%20Modelo%20%E2%80%93%20Nivel%202.png)
 
@@ -371,7 +415,6 @@ La solución está conformada por cinco contenedores principales. La Aplicación
 
 La información estructurada se almacena en una base de datos PostgreSQL, mientras que las fotografías y demás evidencias se gestionan mediante un Servicio de Almacenamiento de Objetos. Esta separación de responsabilidades favorece la mantenibilidad, escalabilidad y evolución del sistema.
 
-
 | Elemento | Tipo | Responsabilidad | Tecnología | Interfaces expuestas | Dependencias |
 |----------|------|-----------------|------------|----------------------|--------------|
 | Aplicación Web | Contenedor | Proporciona la interfaz para administradores de proyecto, arquitectos e ingenieros. Permite gestionar proyectos, cronogramas, tareas, inventario, compras y consultar reportes del sistema. | React | REST sobre HTTPS | API REST |
@@ -379,6 +422,30 @@ La información estructurada se almacena en una base de datos PostgreSQL, mientr
 | API REST | Contenedor | Centraliza la lógica de negocio del sistema. Gestiona autenticación, autorización, proyectos, cronogramas, inventario, compras, reportes y la persistencia de la información. | Spring Boot (Java 21) | Endpoints REST (`/api/v1/*`) | PostgreSQL y Servicio de Almacenamiento de Objetos |
 | Base de Datos | Base de datos | Almacena la información persistente del sistema: usuarios, proyectos, tareas, cronogramas, inventario, compras y registros históricos. | PostgreSQL | JDBC | API REST |
 | Servicio de Almacenamiento de Objetos | Sistema externo | Almacena fotografías y documentos asociados a los proyectos. La base de datos conserva únicamente las referencias a dichos archivos. | Compatible con S3 | HTTPS | API REST |
+
+
+#### 8.2.1 Vista de Componentes (Nivel 3) — API REST: Módulo de Avances
+Esta vista desglosa internamente el contenedor "API REST" para el registro de avances, mostrando cómo se dividen las responsabilidades.
+
+| Componente | Responsabilidad | Dependencias (Hacia dónde apunta) |
+| :--- | :--- | :--- |
+| **AvanceController** | Recibe peticiones HTTP, valida el payload y delega la ejecución. | `AvanceService` |
+| **AvanceService** | Orquesta la lógica de negocio, validaciones y guardado. | `AvanceRepository`, `S3StorageService` |
+| **AvanceRepository** | Maneja la persistencia transaccional en PostgreSQL. | Base de Datos (PostgreSQL) |
+| **S3StorageService** | Adapta la comunicación con el servicio de almacenamiento externo. | Almacenamiento de Objetos (S3) |
+
+
+#### 8.2.2 Vista de Componentes (Nivel 3) — Aplicación Móvil: Módulo de Sincronización
+La siguiente vista tabular desglosa el contenedor "Aplicación Móvil" para evidenciar los componentes encargados de gestionar el trabajo offline y la sincronización:
+
+| Componente | Responsabilidad | Dependencias |
+| :--- | :--- | :--- |
+| **SyncController** | Inicia el proceso de sincronización en background o manual. | `SyncService` |
+| **SyncService** | Lee pendientes locales, envía datos y maneja conflictos. | `SyncRepository`, `ApiClient`, `SyncStrategy` |
+| **SyncRepository** | Administra la cola local de registros SQLite/Room. | Almacenamiento Local (Dispositivo) |
+| **ApiClient** | Cliente HTTP que envía la carga útil al servidor. | API REST (Backend) |
+| **ManualConflictStrategy**| Define qué hacer al detectar un conflicto (estado CONFLICT). | Ninguna |
+
 
 ### 8.3 Vista de comportamiento
 
@@ -436,7 +503,7 @@ Escenarios de calidad validados:
 
 
 
-## 9\. Estilo arquitectónico
+## 9. Estilo arquitectónico
 La Plataforma de Gestión de Construcción adopta una arquitectura monolítica modular, organizada en capas de presentación, lógica de negocio y persistencia. Este estilo permite mantener una separación clara de responsabilidades, facilita el mantenimiento del sistema y reduce la complejidad de desarrollo y despliegue, siendo una solución adecuada para el tamaño del proyecto y los requerimientos funcionales y de calidad definidos.
 
 
@@ -696,73 +763,507 @@ Una vez autenticado el usuario, el sistema emitirá un token JWT que será utili
 **Revisión requerida si**
 Esta decisión deberá revisarse si se incorporan nuevos requerimientos de autenticación, como integración con proveedores de identidad externos (por ejemplo, OAuth 2.0 u OpenID Connect), autenticación multifactor (MFA) o mecanismos de autorización más granulares que los proporcionados por un esquema basado únicamente en roles.
 
-## 11. Primer Componente: Registro de Avance de Obra
+## 11. Diseño detallado de componentes
 
-### 11.1 Secuencia del flujo principal
+El diseño detallado se concentra en tres componentes que presentan el mayor impacto sobre los atributos de calidad prioritarios y sobre el desafío arquitectónico central del sistema: **Registro de Avance de Obra**, **Sincronización de Información** y **Autenticación y Autorización**. Estos componentes se relacionan directamente con los casos de uso definidos para los usuarios de campo y oficina y con los mecanismos establecidos en la vista de estructura interna, la vista de comportamiento y los ADR documentados.
 
-![Diagrama de flujo Avance de Obra](../diagramas/diagrama_flujo_Avance_de_Obra.png)
+> **Nota:** El primer componente ya contaba con diseño preliminar en el documento anterior. En esta versión se reorganiza según la estructura del template y se completa con contratos, análisis de robustez, flujo principal y camino de error. Los componentes 2 y 3 constituyen el diseño detallado que completa el alcance solicitado para el Bloque 5.
 
-El Registro de Avance de Obra es el subsistema encargado de recolectar las actualizaciones diarias o semanales reportadas por los encargados en campo y sincronizarlas con la plataforma principal. El comportamiento dinámico de este componente ya se encuentra documentado en la sección **8.3.1 Registro de avance de obra**. El flujo establece que la aplicación móvil envía los datos a la API REST, el backend coordina la subida de fotografías al servicio de almacenamiento (Amazon S3), guarda la información transaccional en PostgreSQL y retorna la confirmación al cliente.
+### Componente 1 — Registro de Avance de Obra
 
-### 11.2 Diagrama de clases de diseño
+**Responsabilidad:** Recibir, validar y persistir los avances de obra reportados desde campo, coordinando la asociación de evidencias fotográficas y garantizando la consistencia de la operación.
 
-![Diagrama de clases Avance de Obra](../diagramas/diagrama_clase_Avance_de_Obra.png)
+**Trazabilidad:** CU1: Registrar avances de obra, CU4: Adjuntar evidencia fotográfica → API REST / módulo de avances, identificado en la vista de estructura interna de la sección 8.2.
 
-El siguiente diagrama de clases ilustra la estructura interna del backend (Spring Boot) para el módulo de avances, aplicando el patrón de diseño MVC y la separación por capas (Controlador, Servicio y Repositorio).
+#### 11.1.1 Diagrama de clases de diseño
 
-**Figura 5. Diagrama de clases de diseño**
 
-**Descripción de las clases principales:**
-*   **AvanceController:** Punto de entrada de la API REST. Se encarga de recibir las peticiones HTTP, validar la estructura básica del payload (anotaciones de validación) y retornar los códigos de estado HTTP correspondientes.
-*   **AvanceService:** Contiene la lógica de negocio. Orquesta la subida de imágenes a S3 y el guardado en la base de datos de manera transaccional.
-*   **S3StorageService:** Servicio adaptador encargado de la comunicación directa con el API de Amazon S3.
-*   **AvanceRepository:** Interfaz basada en Spring Data JPA para la persistencia en PostgreSQL.
-*   **Avance (Entity):** Representa el modelo de dominio y la tabla en la base de datos relacional.
+**Figura 5 — Diagrama de clases de diseño del componente Registro de Avance de Obra.**
+![Diagrama de clases de diseño del componente Registro de Avance de Obra](../diagramas/diagrama_clases_registro_avance_obra.png)
 
-### 11.3 Análisis de robustez
+El diseño mantiene la separación por capas ya definida para el backend Spring Boot. `AvanceController` funciona como boundary de la API REST; `AvanceService` concentra la lógica de negocio; `AvanceRepository` encapsula la persistencia en PostgreSQL; `S3StorageService` aísla la comunicación con el almacenamiento de objetos; y `Avance` representa la entidad persistente. Esta separación evita que el controlador conozca detalles de PostgreSQL o S3 y facilita la evolución del componente.
 
-Para garantizar la fiabilidad del sistema frente a fallos (particularmente por las restricciones de red y servicios externos), el componente implementa los siguientes mecanismos de manejo de excepciones:
+#### 11.1.2 Contratos de interfaz
 
-1.  **Fallo en la conexión a la base de datos (PostgreSQL):**
-    *   Si la base de datos no está disponible al momento de guardar el `Avance`, la capa de servicio capturará la excepción interna. El backend responderá con un código HTTP `503 Service Unavailable`. La aplicación móvil (cliente) detectará este error y mantendrá el registro en su cola local para reintentar la sincronización más tarde.
-2.  **Fallo en la subida de evidencias a Amazon S3:**
-    *   Si el servicio de almacenamiento externo falla por timeout o credenciales inválidas, el método transaccional de Spring Boot (`@Transactional`) realizará un *rollback* automático. Esto evita que quede guardado un avance en la base de datos sin sus fotografías correspondientes, manteniendo la consistencia (Escenario QS-02). El cliente recibirá un HTTP `502 Bad Gateway`.
-3.  **Datos de entrada inválidos (Payload incorrecto):**
-    *   Si la petición enviada desde el móvil no incluye campos obligatorios (ej. `proyectoId` o `descripcion`), el `AvanceController` rechazará la petición inmediatamente (ej. mediante `MethodArgumentNotValidException`), retornando un HTTP `400 Bad Request` sin llegar a consumir recursos de base de datos ni almacenamiento.
+| Método / Endpoint | Precondición | Postcondición | Excepciones |
+|---|---|---|---|
+| `POST /api/v1/avances` | Usuario autenticado; `proyectoId`, `descripcion`, `porcentajeCompletado` y `fechaRegistro` válidos. | Se crea un `Avance`, se almacenan sus evidencias y se retorna `201 Created` con el identificador generado. | `400` por datos inválidos; `401` por JWT ausente o inválido; `403` por permisos insuficientes; `502` por fallo de almacenamiento; `503` por indisponibilidad de PostgreSQL. |
+| `AvanceService.crearAvance(AvanceRequest): AvanceResponse` | Request validado y usuario autorizado para el proyecto. | El avance queda persistido y las referencias de evidencias quedan asociadas al registro. | `IllegalArgumentException`; `StorageException`; `DataAccessException`. |
+| `S3StorageService.upload(File): String` | Archivo válido y servicio de almacenamiento disponible. | Retorna la referencia del objeto almacenado. | `StorageException` por timeout, credenciales inválidas o error del proveedor. |
 
-### 11.4 Contratos de interfaz documentados
+El endpoint mantiene el contrato previamente documentado para `POST /api/v1/avances`: requiere `Authorization: Bearer <JWT_TOKEN>` y `Content-Type: application/json`, y contempla respuestas `201`, `400`, `401`, `403` y `500/503` según el resultado de la operación.
 
-A continuación, se detalla el contrato de la API REST (Endpoint) que consume la aplicación móvil para registrar un avance.
+#### 11.1.3 Análisis de robustez
 
-*   **Endpoint:** `POST /api/v1/avances`
-*   **Descripción:** Permite a un usuario autenticado registrar un nuevo avance de obra asociando evidencias fotográficas.
-*   **Headers requeridos:**
-    *   `Authorization: Bearer <JWT_TOKEN>`
-    *   `Content-Type: application/json`
+| Objeto | Tipo (Boundary / Control / Entity) | Responsabilidad |
+|---|---|---|
+| `AvanceController` | Boundary | Recibir la petición HTTP, validar el payload y traducir el resultado a códigos HTTP. |
+| `AvanceRequest` | Boundary / DTO | Transportar los datos recibidos desde la aplicación móvil. |
+| `AvanceService` | Control | Coordinar validaciones, almacenamiento de evidencias y persistencia del avance. |
+| `S3StorageService` | Control / Adapter | Aislar la integración con el almacenamiento de objetos. |
+| `AvanceRepository` | Control / Persistence Gateway | Proporcionar el acceso a PostgreSQL mediante Spring Data JPA. |
+| `Avance` | Entity | Mantener el estado persistente del avance y sus referencias a evidencias. |
 
-**Request Body (JSON):**
+El diseño contempla tres condiciones de error principales. Si PostgreSQL no está disponible, el backend responde `503` y el cliente conserva el registro para reintento. Si el almacenamiento de evidencias falla, se evita confirmar la operación incompleta y se retorna un error de servicio. Si el payload es inválido, `AvanceController` rechaza la solicitud con `400` antes de acceder a la persistencia.
 
-```json
-{
-  "proyectoId": "550e8400-e29b-41d4-a716-446655440000",
-  "usuarioId": "123e4567-e89b-12d3-a456-426614174000",
-  "descripcion": "Fundición de losas del segundo nivel sector A.",
-  "porcentajeCompletado": 15.5,
-  "fechaRegistro": "2026-07-28T14:30:00Z",
-  "evidenciasBase64": [
-    "iVBORw0KGgoAAAANSUhEUgAA...", 
-    "R0lGODlhAQABAIAAAAAAAP..."
-  ]
-}
-```
-*(Nota: Para optimizar la sincronización diferida, las imágenes se envían codificadas en Base64 en el payload o mediante una arquitectura multipart/form-data según la configuración del cliente).*
+#### 11.1.4 Diagrama de secuencia — flujo principal detallado
 
-**Respuestas esperadas:**
+**Figura 6 — Diagrama de flujo en Caso Exitoso de Registro de Avance de Obra.**
+![Diagrama de flujo en Caso Exitoso de Registro de Avance de Obra](../diagramas/diagrama_secuencia_resgitro_avance_obra_caso_exitoso.png)
 
-| Código HTTP | Significado | Estructura del Response (Ejemplo) |
+**Camino de error:** si la validación falla, `AvanceController` retorna `400` sin ejecutar persistencia. Si falla PostgreSQL, `AvanceService` no confirma el registro y el cliente mantiene la información para reintentar. Si falla el almacenamiento de evidencias, la operación no se considera exitosa y se devuelve un error de servicio.
+
+**Figura 7 — Diagrama de flujo en Caso de Error de Registro de Avance de Obra.**
+![Diagrama de flujo en Caso de Error de Registro de Avance de Obra](../diagramas/diagrama_secuencia_resgitro_avance_obra_caso_error.png)
+
+
+
+### Componente 2 — Sincronización de Información
+
+**Responsabilidad:** Gestionar el envío diferido de registros generados en campo hacia la API REST cuando se restablece la conectividad, evitando pérdida de información y controlando el estado de sincronización.
+
+**Trazabilidad:** CU1: Registrar avances de obra, CU2: Reportar avances diarios, CU3: Actualizar estado de tareas → Aplicación Móvil / módulo de sincronización, relacionado con la API REST en la vista de estructura interna y con ADR-005.
+
+#### 11.2.1 Diagrama de clases de diseño
+
+**Figura 8 — Diagrama de clases de Sincronización de Información.**
+![Diagrama de clases de Sincronización de Información](../diagramas/diagrama_sincronizacion_informacion.png)
+
+
+La separación entre `SyncService`, `SyncRepository` y `ApiClient` permite que la lógica de sincronización no dependa directamente del almacenamiento local ni del protocolo HTTP. `SyncStrategy` encapsula la política de resolución de conflictos. La estrategia definida para el alcance actual consiste en detectar el conflicto, conservar la información y marcar el registro como **conflicto pendiente** para resolución manual, tal como establece QS-02.
+
+#### 11.2.2 Contratos de interfaz
+
+| Método / Endpoint | Precondición | Postcondición | Excepciones |
+|---|---|---|---|
+| `SyncService.syncPendingRecords(): SyncResult` | Existen cero o más registros locales pendientes; la aplicación puede ejecutarse aunque no exista conexión. | Cada registro enviado exitosamente queda marcado como sincronizado; los conflictos quedan marcados como pendientes. | `SyncTransportException`; `AuthenticationException`; `ConflictDetectedException`. |
+| `SyncService.syncRecord(SyncRecord): SyncStatus` | Registro local válido y en estado pendiente. | El registro pasa a `SYNCED`, `CONFLICT` o permanece `PENDING` según el resultado. | Error de transporte o respuesta inválida del servidor. |
+| `POST /api/v1/sync` | JWT válido y lote de registros correctamente formado. | La API valida y procesa el lote, devolviendo el resultado de cada registro. | `400`, `401`, `409` por conflicto o `503` por indisponibilidad temporal. |
+| `SyncRepository.markSynced(UUID): void` | El registro existe y pertenece a la cola local. | El registro queda marcado como sincronizado y no vuelve a enviarse automáticamente. | `IllegalStateException` si el registro no existe o ya fue procesado. |
+
+#### 11.2.3 Análisis de robustez
+
+| Objeto | Tipo (Boundary / Control / Entity) | Responsabilidad |
+|---|---|---|
+| `SyncController` | Boundary | Iniciar el proceso de sincronización y exponer su resultado al cliente. |
+| `SyncService` | Control | Coordinar lectura de pendientes, envío, detección de conflictos y actualización de estados. |
+| `ApiClient` | Boundary / Adapter | Comunicar la aplicación móvil con la API REST. |
+| `SyncRepository` | Control / Persistence Gateway | Leer y actualizar la cola local de registros pendientes. |
+| `SyncStrategy` | Control | Encapsular la política de resolución de conflictos. |
+| `SyncRecord` | Entity | Representar un cambio local y su estado de sincronización. |
+
+La robustez se basa en no marcar un registro como sincronizado hasta recibir confirmación del servidor. Ante una interrupción de red, el registro permanece `PENDING`; ante un conflicto, pasa a `CONFLICT` y conserva la trazabilidad para resolución manual. Esto permite mantener la disponibilidad en campo sin sacrificar el control de consistencia.
+
+#### 11.2.4 Diagrama de secuencia — flujo principal
+
+**Figura 9 — Diagrama de flujo de Sincronización de Información caso exitoso.**
+![Diagrama de flujo de Sincronización de Información caso exitoso](../diagramas/diagrama_sincronizacion_informacion_caso_exitoso.png)
+
+**Camino de error — conflicto:**
+
+**Figura 10 — Diagrama de flujo de Sincronización de Información caso de error.**
+![Diagrama de flujo de Sincronización de Información caso de error](../diagramas/diagrama_sincronizacion_informacion_caso_exitoso.png)
+
+### Componente 3 — Autenticación y Autorización
+
+**Responsabilidad:** Autenticar usuarios de la plataforma y controlar el acceso a recursos según el rol asignado, protegiendo las operaciones realizadas desde las aplicaciones web y móvil.
+
+**Trazabilidad:** CU1: Registrar avances de obra, CU3: Supervisar tareas, CU5: Solicitar materiales, además de los casos de uso administrativos que requieren acceso según rol → API REST / módulo de autenticación y autorización, relacionado con ADR-006.
+
+#### 11.3.1 Diagrama de clases de diseño
+
+**Figura 11 — Diagrama de clases de diseño del componente Autenticación y Autorización.**
+![Diagrama de clases de Autenticación y Autorización](../diagramas/diagrama_autenticacion_autorizacion.png)
+
+El componente aplica la decisión documentada en ADR-006: JWT para autenticación sin estado y RBAC para autorización. `AuthController` recibe las credenciales; `AuthService` coordina la autenticación; `JwtTokenService` administra la emisión y validación del token; `JwtAuthenticationFilter` intercepta las solicitudes protegidas; y `AuthorizationService` verifica que el rol del usuario tenga permiso sobre el recurso solicitado.
+
+#### 11.3.2 Contratos de interfaz
+
+| Método / Endpoint | Precondición | Postcondición | Excepciones |
+|---|---|---|---|
+| `POST /api/v1/auth/login` | Usuario registrado y credenciales recibidas en formato válido. | Se retorna un JWT válido y la información básica del usuario autenticado. | `400` por request inválido; `401` por credenciales incorrectas. |
+| `AuthService.authenticate(LoginRequest): TokenResponse` | Username y contraseña presentes. | Usuario autenticado y token JWT generado con su rol. | `AuthenticationException` si las credenciales no son válidas. |
+| `JwtTokenService.validate(String): AuthenticatedUser` | Token con estructura válida. | Retorna identidad y rol si el token es válido y no ha expirado. | `InvalidTokenException` por token inválido o expirado. |
+| `AuthorizationService.hasPermission(User, String, String): boolean` | Usuario autenticado y recurso identificado. | Retorna `true` únicamente cuando el rol permite ejecutar la acción solicitada. | `AccessDeniedException` cuando la política rechaza la operación. |
+
+#### 11.3.3 Análisis de robustez
+
+| Objeto | Tipo (Boundary / Control / Entity) | Responsabilidad |
+|---|---|---|
+| `AuthController` | Boundary | Recibir las credenciales y devolver la respuesta HTTP correspondiente. |
+| `JwtAuthenticationFilter` | Boundary | Interceptar solicitudes protegidas y extraer el JWT. |
+| `AuthService` | Control | Coordinar búsqueda del usuario, validación de credenciales y generación del token. |
+| `JwtTokenService` | Control | Crear y validar tokens JWT. |
+| `AuthorizationService` | Control | Aplicar las reglas RBAC para autorizar acciones. |
+| `UserRepository` | Control / Persistence Gateway | Recuperar información de usuarios desde PostgreSQL. |
+| `User` | Entity | Representar al usuario y su rol persistente. |
+
+El componente rechaza solicitudes sin credenciales válidas antes de ejecutar operaciones protegidas. Un token inválido o expirado genera `401`; un usuario autenticado pero sin permisos suficientes genera `403`. Esta separación permite distinguir autenticación de autorización y mantiene las reglas de acceso centralizadas en el backend.
+
+#### 11.3.4 Diagrama de secuencia — flujo principal
+
+**Figura 12 — Diagrama de clases de diseño del componente Autenticación y Autorización.**
+![Diagrama de flujo de Autenticación y Autorización caso exitoso](../diagramas/diagrama_autenticacion_autorizacion_caso_exitoso.png)
+
+**Camino de error — token inválido:**
+
+**Figura 13 — Diagrama de clases de diseño del componente Autenticación y Autorización.**
+![Diagrama de flujo de Autenticación y Autorización caso error](../diagramas/diagrama_autenticacion_autorizacion_caso_error.png)
+
+
+---
+
+## 12. Patrones de diseño aplicados
+
+Los patrones seleccionados se aplican sobre problemas concretos identificados en el diseño. No se utilizan como elementos decorativos: cada uno reduce un acoplamiento o encapsula una decisión que podría cambiar con la evolución del sistema.
+
+### Patrón 1 — Adapter
+
+| Campo | Detalle |
+|---|---|
+| **Categoría** | Estructural |
+| **Ubicación en el sistema** | `S3StorageService`, dentro del componente Registro de Avance de Obra (sección 11.1). |
+| **Problema que resuelve** | El módulo de avances necesita almacenar fotografías en un servicio externo compatible con S3 sin acoplar la lógica de negocio a la API concreta del proveedor. |
+| **Alternativa considerada** | Invocar directamente el SDK de Amazon S3 desde `AvanceService`. |
+| **Por qué el patrón y no la alternativa** | El adaptador concentra la dependencia externa en una sola clase. Así, `AvanceService` trabaja con una interfaz estable y el proveedor puede sustituirse o modificarse sin alterar la lógica principal del registro de avances. |
+
+**Figura 14 — Aplicación del patrón Adapter para el almacenamiento de evidencias.**
+![Diagrama Aplicación del patrón Adapter](../diagramas/diagrama_patron_adapter.png)
+
+
+### Patrón 2 — Repository
+
+| Campo | Detalle |
+|---|---|
+| **Categoría** | Estructural / Persistencia |
+| **Ubicación en el sistema** | `AvanceRepository` y `SyncRepository`, en los componentes Registro de Avance y Sincronización. |
+| **Problema que resuelve** | Separar la lógica de negocio del acceso directo a PostgreSQL y del detalle de persistencia utilizado por Spring Data JPA. |
+| **Alternativa considerada** | Ejecutar consultas SQL o llamadas JPA directamente desde los servicios de negocio. |
+| **Por qué el patrón y no la alternativa** | El repositorio establece una frontera clara para la persistencia. Esto reduce el acoplamiento entre servicios y tecnología de almacenamiento y facilita pruebas y cambios futuros del mecanismo de acceso a datos. |
+
+**Figura 15 — Aplicación del patrón Repository para la persistencia.**
+![Diagrama Aplicación del patrón Repository](../diagramas/diagrama_patron_repository.png)
+
+### Patrón 3 — Strategy
+
+| Campo | Detalle |
+|---|---|
+| **Categoría** | Comportamiento |
+| **Ubicación en el sistema** | `SyncStrategy` dentro del componente Sincronización de Información (sección 11.2). |
+| **Problema que resuelve** | La sincronización puede requerir diferentes políticas de resolución cuando el registro local y el registro del servidor presentan cambios incompatibles. |
+| **Alternativa considerada** | Colocar toda la lógica de resolución mediante condicionales dentro de `SyncService`. |
+| **Por qué el patrón y no la alternativa** | Strategy permite encapsular la política de resolución y cambiarla sin modificar el flujo principal de sincronización. Para el alcance actual se utiliza `ManualConflictStrategy`, que marca el conflicto como pendiente y conserva la trazabilidad. |
+
+**Figura 16 — Aplicación del patrón Strategy para la política de resolución de conflictos.**
+![Diagrama Aplicación del patrón Strategy](../diagramas/diagrama_patron_strategy.png)
+
+---
+
+## 13. Principios y Técnicas Habilitadoras — Evidencia
+
+El diseño de la solución se fundamenta en los principios **SOLID** y técnicas arquitectónicas orientadas a la mantenibilidad y resiliencia.
+
+| Principio | Evidencia específica en el diseño | Tensión con otro principio |
 | :--- | :--- | :--- |
-| **201 Created** | Avance registrado y evidencias subidas exitosamente. | `{ "mensaje": "Avance registrado con éxito", "avanceId": "uuid" }` |
-| **400 Bad Request** | Faltan campos obligatorios o formatos incorrectos. | `{ "error": "BAD_REQUEST", "detalles": ["descripcion es requerida"] }` |
-| **401 Unauthorized** | El token JWT no existe, está mal formado o ha expirado. | `{ "error": "UNAUTHORIZED", "mensaje": "Token inválido o expirado" }` |
-| **403 Forbidden** | El usuario autenticado no tiene el rol necesario en este proyecto. | `{ "error": "FORBIDDEN", "mensaje": "No tiene permisos en este proyecto" }` |
-| **500 / 503** | Error interno del servidor o pérdida de conexión con PostgreSQL/S3. | `{ "error": "SERVICE_UNAVAILABLE", "mensaje": "Error temporal guardando el registro" }` |
+| **Single Responsibility (SRP)** | En la **Figura 5**, `AvanceController` se encarga exclusivamente de la capa HTTP, mientras que `AvanceService` maneja la regla de negocio y `S3StorageService` la transferencia de archivos. | Aumenta la cantidad de clases, tensionando con la simplicidad (KISS). |
+| **Open/Closed (OCP)** | En la **Figura 8**, el motor de sincronización (`SyncService`) está abierto a extensión mediante la interfaz `SyncStrategy`, permitiendo agregar nuevas políticas (ej. *AutoResolveStrategy*) sin modificar la clase base. | Incrementa la abstracción frente al uso de simples condicionales. |
+| **Liskov Substitution (LSP)** & **Interface Segregation (ISP)** | En la **Figura 14**, el componente de avances depende de la interfaz general `StorageService`. Cualquier implementación (como `S3StorageService`) puede sustituirla sin alterar el contrato de la interfaz, la cual es pequeña y enfocada (solo contiene el método `upload`). | Ninguna significativa; mejora directamente la cohesión. |
+| **Dependency Inversion (DIP)** | En la **Figura 15**, `AvanceService` (alto nivel) no depende directamente de PostgreSQL (bajo nivel), sino de la abstracción `AvanceRepository`. | Requiere configuración de inyección de dependencias en el framework (Spring). |
+| **Separación de Responsabilidades (SoC) / DRY** | Centralización de la validación de tokens en `JwtAuthenticationFilter` (**Figura 11**), evitando duplicar código de seguridad en cada controlador de la API. | La centralización crea dependencia de la API (Single Point of Failure). |
+| **Diseño orientado a la resiliencia** | La cola local (`SyncRepository`, **Figura 8**) mantiene operaciones en estado `PENDING` hasta recibir el *200 OK* del servidor, protegiendo contra pérdida de datos. | Tensión con la consistencia inmediata (QS-02), aceptada para favorecer la disponibilidad (QS-01). |
+
+### Trazabilidad resumida del diseño
+
+| Caso de uso / driver | Componente | Patrón / decisión relacionada | Atributo de calidad |
+|---|---|---|---|
+| CU1 Registrar avances de obra | Registro de Avance | Adapter, Repository, ADR-004 | Consistencia, trazabilidad, seguridad |
+| CU4 Adjuntar evidencia fotográfica | Registro de Avance | Adapter, ADR-004 | Resiliencia, trazabilidad |
+| CU1 / CU2 Registrar avances en campo | Sincronización | Strategy, ADR-005 | Disponibilidad, consistencia |
+| CU3 Supervisar tareas | Autenticación y Autorización | JWT + RBAC, ADR-006 | Seguridad, trazabilidad |
+| Operación con conectividad intermitente | Sincronización | Cola local + sincronización diferida | Disponibilidad, resiliencia |
+
+El diseño detallado mantiene la relación entre los casos de uso, los componentes de la vista de estructura interna, los escenarios de calidad y las decisiones arquitectónicas. De esta forma, el Bloque 5 no introduce componentes aislados, sino que concreta las decisiones tomadas previamente para resolver el problema central de operación en campo, sincronización, consistencia, manejo de evidencias y control de acceso.
+
+
+## 14. Análisis de calidad del diseño
+
+El análisis de calidad permite validar que las decisiones arquitectónicas y el diseño detallado responden a los escenarios de calidad definidos para el sistema. Para esta evaluación se consideran los escenarios QS-01 a QS-05, los componentes críticos diseñados y los ADR relacionados.
+
+### 14.1 Validación de escenarios de calidad
+
+| Escenario | Validación del diseño | Evidencia |
+|---|---|---|
+| **QS-01 — Disponibilidad** | El diseño permite que la aplicación móvil continúe registrando información cuando no existe conectividad. Los registros se almacenan localmente y quedan pendientes de sincronización hasta que se restablece la conexión. | Componente **Sincronización de Información**, `SyncRepository`, estados `PENDING` / `SYNCED` y ADR-005. |
+| **QS-02 — Consistencia** | El diseño contempla la detección de conflictos durante la sincronización. Los registros que presentan modificaciones incompatibles se mantienen como `CONFLICT` para resolución posterior, evitando sobrescribir información automáticamente. | `SyncService`, `SyncStrategy`, `ManualConflictStrategy` y ADR-005. |
+| **QS-03 — Trazabilidad** | La información de las operaciones se mantiene centralizada en el backend y en PostgreSQL, permitiendo consultar los registros y asociarlos con las operaciones realizadas. | PostgreSQL, API REST, `Repository` y los componentes de negocio definidos en la sección 11. |
+| **QS-04 — Seguridad** | El acceso a los recursos protegidos requiere autenticación mediante JWT y posteriormente una validación de permisos basada en roles. Las solicitudes no autorizadas son rechazadas antes de ejecutar la operación protegida. | Componente **Autenticación y Autorización**, `JwtAuthenticationFilter`, `JwtTokenService`, `AuthorizationService` y ADR-006. |
+| **QS-05 — Resiliencia** | Las operaciones relacionadas con evidencias fotográficas se desacoplan del almacenamiento transaccional. Además, la sincronización diferida permite conservar operaciones pendientes cuando se interrumpe la conectividad. | `S3StorageService`, patrón Adapter, almacenamiento de objetos, componente de Sincronización y ADR-004 / ADR-005. |
+
+El diseño proporciona mecanismos específicos para responder a los escenarios de calidad definidos. Sin embargo, las métricas cuantitativas establecidas en los escenarios deberán comprobarse mediante pruebas durante la implementación. Por lo tanto, esta sección valida que el diseño contiene los mecanismos necesarios, pero no pretende sustituir la evidencia obtenida mediante pruebas de rendimiento, disponibilidad o seguridad.
+
+### 14.2 Trade-offs entre atributos de calidad
+
+Las decisiones arquitectónicas implican compromisos entre diferentes atributos de calidad. En particular, la necesidad de soportar operación offline genera una tensión entre disponibilidad y consistencia, mientras que la incorporación de mecanismos de seguridad y abstracciones adicionales genera compromisos entre seguridad, mantenibilidad, simplicidad y rendimiento.
+
+| Trade-off | Decisión adoptada | Justificación |
+|---|---|---|
+| **Disponibilidad vs. consistencia inmediata** | Se prioriza la disponibilidad mediante operación offline y sincronización diferida. | Los usuarios deben poder registrar información en campo aun cuando no exista conexión. La consistencia se recupera posteriormente mediante sincronización y detección de conflictos. |
+| **Disponibilidad vs. resolución inmediata de conflictos** | Los conflictos se marcan como `CONFLICT` para resolución posterior. | Resolver automáticamente un conflicto podría producir una pérdida o sobrescritura incorrecta de información. Se prioriza conservar los datos y mantener la trazabilidad. |
+| **Mantenibilidad vs. simplicidad** | Se utilizan `Repository`, `Adapter` y `Strategy` en puntos donde existe una variabilidad real. | Estas abstracciones agregan clases e interfaces, pero permiten aislar dependencias externas y políticas que pueden cambiar durante la evolución del sistema. |
+| **Seguridad vs. rendimiento** | Se aplican autenticación JWT y autorización RBAC en las operaciones protegidas. | Las validaciones adicionales introducen procesamiento, pero son necesarias para cumplir los requisitos de seguridad y control de acceso. |
+| **Simplicidad vs. resiliencia** | Se incorpora una cola local para los registros pendientes de sincronización. | La cola agrega complejidad al cliente móvil, pero permite mantener la operación durante períodos sin conectividad y reducir el riesgo de pérdida de información. |
+| **Base de datos vs. almacenamiento de objetos** | Las fotografías se almacenan mediante un servicio de objetos separado de PostgreSQL. | Esto evita utilizar la base de datos transaccional como almacenamiento principal de archivos multimedia y permite separar las necesidades de persistencia estructurada de las evidencias fotográficas. |
+
+Los trade-offs anteriores son coherentes con la decisión general de mantener una arquitectura monolítica modular. Se evita introducir complejidad innecesaria, pero se mantienen abstracciones en los puntos donde aportan beneficios claros para los atributos de calidad prioritarios.
+
+### 14.3 Métricas estimadas de cohesión y acoplamiento
+
+La evaluación de cohesión y acoplamiento se realiza sobre los tres componentes críticos definidos en la sección 11. Debido a que el proyecto se encuentra en etapa de diseño, estas métricas se presentan como una evaluación cualitativa y deberán complementarse con métricas obtenidas durante la implementación.
+
+| Componente | Cohesión estimada | Acoplamiento estimado | Justificación |
+|---|---|---|---|
+| **Registro de Avance de Obra** | Alta | Medio | Las responsabilidades están concentradas en el registro de avances y la asociación de evidencias. Las dependencias hacia PostgreSQL y el almacenamiento de objetos están aisladas mediante `AvanceRepository` y `S3StorageService`. |
+| **Sincronización de Información** | Alta | Medio | `SyncService` coordina la sincronización, mientras `SyncRepository`, `ApiClient` y `SyncStrategy` mantienen responsabilidades diferenciadas. Existen dependencias hacia almacenamiento local y API REST, pero se encuentran encapsuladas. |
+| **Autenticación y Autorización** | Alta | Medio | La autenticación, validación de tokens y autorización están separadas entre `AuthService`, `JwtTokenService`, `JwtAuthenticationFilter` y `AuthorizationService`. La dependencia hacia usuarios persistidos se mantiene mediante `UserRepository`. |
+
+
+En los tres componentes se busca mantener alta cohesión, agrupando responsabilidades relacionadas dentro de cada componente, y acoplamiento moderado, aislando dependencias externas mediante interfaces y patrones de diseño.
+
+Esta evaluación también evidencia la aplicación de los principios de Separación de Responsabilidades, Alta Cohesión y Bajo Acoplamiento y Diseño para el Cambio, documentados anteriormente. Los patrones Repository, Adapter y Strategy contribuyen directamente a limitar el impacto de cambios en persistencia, almacenamiento externo y políticas de sincronización.
+
+
+## Secciones específicas por tipo de sistema
+
+### 15.1 Sistemas distribuidos / cloud
+
+La plataforma presenta características de un sistema distribuido debido a la interacción entre la aplicación web, la aplicación móvil, la API REST, PostgreSQL y el servicio de almacenamiento de objetos. Además, la aplicación móvil debe continuar funcionando durante períodos de conectividad intermitente, por lo que el diseño incorpora mecanismos de almacenamiento local y sincronización diferida.
+
+#### Estrategia de consistencia
+
+El sistema utiliza una estrategia de consistencia eventual para la información registrada desde los dispositivos móviles.
+
+Cuando un usuario registra información mientras se encuentra sin conexión, los datos se almacenan localmente y permanecen en estado `PENDING`. Cuando se recupera la conectividad, el cliente intenta sincronizar los registros con la API REST. Una vez que el servidor confirma correctamente la operación, el registro pasa a estado `SYNCED`.
+
+Cuando se detectan modificaciones incompatibles entre la información local y la información existente en el servidor, el registro se marca como `CONFLICT` y se mantiene pendiente de resolución. Para este comportamiento se utiliza `SyncStrategy`, con `ManualConflictStrategy` como estrategia de resolución definida actualmente.
+
+La consistencia eventual se considera adecuada para el dominio porque los usuarios pueden trabajar en obras con conectividad limitada o intermitente. Priorizar una consistencia inmediata impediría que los usuarios continúen registrando avances cuando no existe conexión.
+
+#### Modelo CAP aplicado
+
+El sistema favorece un modelo AP (Availability + Partition Tolerance) para las operaciones realizadas desde los dispositivos móviles.
+
+La tolerancia a particiones es necesaria debido a que la comunicación entre la aplicación móvil y el backend puede interrumpirse temporalmente. Ante esta situación, la aplicación continúa permitiendo el registro de información mediante almacenamiento local.
+
+La disponibilidad se prioriza porque los encargados de obra deben poder continuar registrando avances y evidencias aun cuando no tengan conexión con el servidor.
+
+Como consecuencia, durante una partición no se garantiza la consistencia inmediata entre el dispositivo y el servidor. Esta consistencia se recupera posteriormente mediante el proceso de sincronización y la detección de conflictos.
+
+Esta decisión está directamente relacionada con **QS-01 Disponibilidad** y **QS-02 Consistencia**, además de la decisión documentada en **ADR-005 — Operación offline y sincronización diferida**.
+
+#### Manejo de fallos y resiliencia
+
+La resiliencia del sistema se basa principalmente en conservar las operaciones pendientes cuando existen interrupciones de conectividad y procesarlas posteriormente.
+
+| Mecanismo | Aplicación | Propósito |
+|---|---|---|
+| **Almacenamiento local** | Aplicación móvil | Permitir registrar información durante períodos sin conectividad. |
+| **Cola de sincronización** | Módulo de sincronización | Mantener operaciones pendientes hasta que puedan enviarse al servidor. |
+| **Estados `PENDING`, `SYNCED` y `CONFLICT`** | Registros sincronizables | Representar explícitamente el estado de cada operación y evitar confirmar operaciones que todavía no han sido sincronizadas. |
+| **Reintento de sincronización** | `SyncService` / `ApiClient` | Intentar nuevamente el envío de operaciones pendientes después de una interrupción de conectividad. |
+| **Detección de conflictos** | `SyncService` / `SyncStrategy` | Evitar que una sincronización sobrescriba automáticamente información incompatible. |
+| **Resolución manual** | `ManualConflictStrategy` | Mantener el conflicto pendiente para que pueda ser revisado y resuelto posteriormente. |
+| **Almacenamiento de objetos** | `S3StorageService` | Separar el almacenamiento de evidencias fotográficas de los datos transaccionales de PostgreSQL. |
+
+El diseño actual no define un Circuit Breaker como componente explícito, por lo que no se considera una decisión arquitectónica adoptada. De igual manera, los valores concretos de `timeout` y las políticas de reintento deberán definirse durante la implementación. Esto evita presentar como implementados mecanismos que todavía no forman parte del diseño documentado.
+
+Los fallos de conectividad se manejan principalmente mediante la persistencia local y la sincronización posterior. Si una operación no puede completarse con el servidor, permanece pendiente en lugar de considerarse exitosa.
+
+#### Modelo de despliegue en nube
+
+El sistema propone un modelo de despliegue centralizado basado en un monolito modular, acompañado por servicios especializados de persistencia y almacenamiento.
+
+La arquitectura está compuesta por los siguientes elementos:
+
+| Elemento | Responsabilidad |
+|---|---|
+| **Aplicación web** | Interfaz utilizada por los usuarios administrativos y de supervisión. |
+| **Aplicación móvil** | Permite registrar información en campo y trabajar temporalmente sin conexión. |
+| **API REST / Backend** | Centraliza la lógica de negocio, autenticación, autorización y operaciones de los clientes. |
+| **PostgreSQL** | Almacena la información estructurada y transaccional del sistema. |
+| **Almacenamiento de objetos compatible con S3** | Almacena fotografías y otras evidencias asociadas a los avances de obra. |
+
+La aplicación web y la aplicación móvil se comunican con el backend mediante HTTPS/REST. El backend centraliza las reglas de negocio y utiliza PostgreSQL para la información estructurada.
+
+Las fotografías no se almacenan directamente como datos transaccionales dentro de PostgreSQL. En su lugar, se utiliza un servicio de almacenamiento de objetos compatible con S3, encapsulado mediante `S3StorageService` y el patrón Adapter.
+
+Este modelo permite mantener una arquitectura relativamente sencilla para el tamaño actual del sistema, evitando introducir microservicios sin una necesidad demostrada. Al mismo tiempo, la separación entre lógica de negocio, persistencia y almacenamiento de evidencias permite evolucionar la solución posteriormente si aumentan la cantidad de usuarios, proyectos o carga del sistema.
+
+
+### 15.2 Sistemas concurrentes / tiempo real
+
+El sistema no corresponde a un sistema de tiempo real estricto, ya que no existen restricciones de respuesta deterministas asociadas a procesos físicos o críticos. Sin embargo, presenta situaciones de concurrencia relacionadas principalmente con la sincronización de información entre dispositivos móviles y el backend.
+
+#### Modelo de concurrencia
+
+El modelo utilizado se basa principalmente en operaciones asincrónicas de sincronización entre el cliente móvil y el backend.
+
+La aplicación móvil puede continuar registrando información localmente mientras no existe conectividad. Posteriormente, cuando se recupera la conexión, el módulo de sincronización procesa las operaciones pendientes y las envía al backend mediante la API REST.
+
+El sistema no utiliza un modelo basado en múltiples hilos administrados directamente por la lógica de negocio ni un modelo de actores. La concurrencia relevante se produce principalmente por la posibilidad de que diferentes clientes realicen operaciones sobre información relacionada antes de que todos los cambios hayan sido sincronizados.
+
+Por esta razón, el diseño se enfoca principalmente en detectar y manejar conflictos de datos, en lugar de utilizar mecanismos de exclusión mutua entre usuarios.
+
+#### Recursos compartidos y sincronización
+
+Los principales recursos compartidos son los registros de información de los proyectos que pueden ser modificados desde diferentes dispositivos o desde la aplicación web.
+
+| Recurso compartido | Mecanismo de sincronización | Riesgo de condición de carrera | Mitigación |
+|---|---|---|---|
+| **Registros de avance de obra** | Sincronización mediante API REST y control de estados `PENDING`, `SYNCED` y `CONFLICT`. | Sí — dos dispositivos podrían modificar información relacionada antes de sincronizar sus cambios. | Detección de conflictos mediante `SyncService` y aplicación de `SyncStrategy`. Los conflictos se mantienen como `CONFLICT` para resolución posterior. |
+| **Información registrada offline** | Cola local de sincronización. | Sí — una misma operación podría intentar sincronizarse nuevamente después de una interrupción. | El estado del registro permite identificar operaciones pendientes y evitar considerarlas sincronizadas hasta recibir confirmación del servidor. |
+| **Evidencias fotográficas** | Sincronización de archivos mediante el servicio de almacenamiento de objetos. | Sí — pueden existir intentos de transferencia repetidos o interrupciones durante el envío. | El estado de la operación se mantiene hasta confirmar correctamente la transferencia. El almacenamiento se encuentra desacoplado mediante `S3StorageService`. |
+| **Datos persistidos en PostgreSQL** | Control transaccional de la persistencia del backend. | Sí — diferentes solicitudes pueden intentar modificar información relacionada de manera concurrente. | La persistencia se centraliza en PostgreSQL y el acceso se encapsula mediante los componentes Repository definidos en el diseño. |
+
+#### Manejo de condiciones de carrera
+
+El principal riesgo de concurrencia se presenta cuando dos clientes trabajan sobre información relacionada sin conocer los cambios realizados por el otro cliente.
+
+El diseño utiliza una estrategia de detección y resolución posterior. Cuando la sincronización identifica una incompatibilidad, el registro no se sobrescribe automáticamente, sino que pasa al estado `CONFLICT`.
+
+Este enfoque permite mantener la disponibilidad del sistema sin sacrificar la trazabilidad de los cambios. La resolución mediante `ManualConflictStrategy` evita que el sistema tome automáticamente una decisión que pueda provocar pérdida de información.
+
+No se identifican actualmente condiciones que requieran el uso explícito de mutex, semáforos u otros mecanismos de exclusión mutua a nivel de la lógica de negocio. La coordinación de las operaciones se realiza mediante los estados de sincronización, las transacciones de persistencia y la detección de conflictos.
+
+### 15.3 Sistemas con seguridad crítica
+
+La seguridad es un aspecto relevante del sistema debido a que la plataforma administra información de proyectos de construcción, usuarios, avances de obra, evidencias fotográficas y datos asociados a diferentes roles. El diseño incorpora controles de autenticación, autorización y protección de las comunicaciones para reducir los riesgos de acceso no autorizado y modificación indebida de la información.
+
+#### Modelo de amenazas
+
+| Amenaza | Componente en riesgo | Mitigación en el diseño |
+|---|---|---|
+| Spoofing | API REST, usuarios y sesiones | Autenticación mediante JWT y validación del token antes de permitir el acceso a recursos protegidos. |
+| Tampering | API REST, registros de proyectos y avances | Validación de solicitudes, autorización basada en roles y persistencia centralizada en PostgreSQL. |
+| Repudiation | Operaciones realizadas sobre proyectos | Asociación de las operaciones con el usuario autenticado y conservación de la información necesaria para mantener la trazabilidad. |
+| Information Disclosure | API REST, PostgreSQL y almacenamiento de objetos | Control de acceso mediante RBAC, autenticación obligatoria y separación entre datos transaccionales y evidencias almacenadas como objetos. |
+| Denial of Service | API REST y servicios del backend | Validación de solicitudes y separación de responsabilidades para evitar que errores de clientes afecten directamente la persistencia. Los mecanismos específicos de rate limiting o protección ante ataques volumétricos quedan fuera del diseño actual. |
+| Elevation of Privilege | API REST y funcionalidades según rol | `AuthorizationService` valida los permisos asociados al rol antes de permitir operaciones protegidas. Los usuarios no autorizados reciben una respuesta de acceso denegado. |
+
+#### Controles por capa
+
+| Capa | Controles de seguridad |
+|---|---|
+| Cliente web y móvil | Autenticación del usuario y envío de solicitudes mediante HTTPS. |
+| Comunicación | Uso de HTTPS para proteger la comunicación entre los clientes y la API REST. |
+| API / Backend | `JwtAuthenticationFilter` valida las credenciales incluidas en las solicitudes protegidas antes de permitir el acceso. |
+| Autenticación | `JwtTokenService` gestiona la validación de los tokens JWT utilizados para identificar al usuario. |
+| Autorización | `AuthorizationService` verifica los permisos asociados al rol del usuario antes de ejecutar operaciones protegidas. |
+| Lógica de negocio | Las operaciones se ejecutan después de superar los controles de autenticación y autorización correspondientes. |
+| Persistencia | PostgreSQL centraliza la información estructurada y el acceso se realiza mediante los componentes Repository definidos en el diseño. |
+| Almacenamiento de evidencias | Las fotografías se mantienen separadas de la información transaccional mediante un servicio de almacenamiento de objetos encapsulado por `S3StorageService`. |
+
+El modelo de seguridad sigue un enfoque de defensa por capas: la autenticación determina quién realiza la solicitud y la autorización determina si dicho usuario puede ejecutar la operación solicitada.
+
+La decisión de utilizar JWT y RBAC se encuentra documentada en el ADR-006. El diseño actual proporciona los controles necesarios para el alcance definido; mecanismos adicionales como autenticación multifactor, rate limiting, detección avanzada de intrusiones o gestión centralizada de secretos podrían incorporarse como parte de una evolución posterior de la plataforma.
+
+## 16. Tendencias y evolución del diseño
+
+La evolución de la arquitectura se plantea de forma incremental, considerando las necesidades actuales del sistema y evitando introducir complejidad que no aporte valor al alcance definido. Las posibles tecnologías y estilos arquitectónicos futuros se consideran como puntos de evolución y no como requisitos actuales.
+
+### 16.1 Tendencias arquitectónicas consideradas
+
+| Tendencia | Postura | Justificación |
+|---|---|---|
+| Microservicios | No adoptada actualmente | El sistema tiene un alcance y una escala que no justifican la complejidad operacional de múltiples servicios independientes. Se mantiene un monolito modular que permite separar responsabilidades sin introducir costos adicionales de despliegue y operación. |
+| Cloud-native | Adopción parcial | El diseño contempla servicios desacoplados para persistencia y almacenamiento de evidencias, además de clientes que consumen una API REST. Sin embargo, no se plantea actualmente una arquitectura completamente basada en microservicios o servicios distribuidos independientes. |
+| Diseño dirigido por el dominio (DDD) | Adopción parcial | La solución separa responsabilidades relacionadas con avances de obra, sincronización, autenticación, inventario, compras y cronogramas. No se considera necesario aplicar todos los patrones tácticos y estratégicos de DDD para el alcance actual. |
+| Arquitectura orientada a eventos | Posible evolución | Podría utilizarse posteriormente para procesar de forma asíncrona eventos como cambios de estado, sincronizaciones, notificaciones o generación de reportes. Actualmente REST resulta suficiente para las necesidades identificadas. |
+| IA generativa / agentes | No adoptada actualmente | No existe un requerimiento actual que justifique incorporar IA generativa. Una futura incorporación tendría que evaluarse considerando seguridad, trazabilidad, calidad de las respuestas y protección de la información de los proyectos. |
+| Observabilidad | Posible evolución | Una versión futura podría incorporar métricas, logs centralizados, trazas y monitoreo de los componentes para facilitar la detección de problemas y evaluar los escenarios de calidad en producción. |
+
+### 16.2 Evolución hacia microservicios
+
+La arquitectura actual utiliza un monolito modular como decisión consciente. Los módulos mantienen responsabilidades separadas y límites claros, permitiendo evolucionar posteriormente aquellos componentes que presenten mayores necesidades de escalabilidad o independencia.
+
+La migración hacia microservicios no se considera necesaria para la primera versión debido a que introduciría complejidad adicional en despliegue, comunicación, monitoreo y manejo de fallos.
+
+Sin embargo, la separación actual permite identificar posibles candidatos para una futura extracción. Entre ellos se encuentran el módulo de sincronización, el procesamiento de evidencias y determinados servicios relacionados con autenticación o notificaciones.
+
+La decisión de mantener el monolito modular está alineada con el ADR-001 y con el principio KISS adoptado en el diseño.
+
+### 16.3 Puntos de extensión futuros
+
+| Punto de extensión | Evolución posible | Elemento actual que lo habilita |
+|---|---|---|
+| Sincronización | Incorporar nuevas estrategias automáticas de resolución de conflictos. | `SyncStrategy` y `ManualConflictStrategy`. |
+| Almacenamiento de evidencias | Cambiar el proveedor de almacenamiento o incorporar procesamiento adicional de fotografías. | `StorageService` y `S3StorageService`. |
+| Persistencia | Sustituir o complementar el mecanismo de persistencia utilizado por el backend. | Interfaces `Repository` y separación entre lógica de negocio y persistencia. |
+| Autorización | Evolucionar desde RBAC hacia permisos más granulares. | `AuthorizationService` y separación entre autenticación y autorización. |
+| API | Incorporar nuevos clientes o integraciones externas. | API REST como punto central de comunicación con el backend. |
+| Notificaciones | Incorporar notificaciones push, correo u otros canales. | Arquitectura modular y separación de responsabilidades. |
+| Procesamiento asíncrono | Incorporar colas o eventos para tareas de larga duración. | Separación entre componentes y posibilidad de introducir procesamiento asincrónico sin modificar directamente la lógica principal. |
+| Observabilidad | Incorporar métricas, logs centralizados y trazabilidad técnica. | Arquitectura modular y centralización de las operaciones en el backend. |
+| Escalabilidad | Extraer módulos específicos hacia servicios independientes. | Límites modulares definidos en el monolito actual. |
+
+### 16.4 Criterios para la evolución
+
+La evolución de la arquitectura deberá basarse en necesidades observables y no únicamente en la adopción de nuevas tecnologías. Antes de introducir un cambio arquitectónico se deberán considerar al menos los siguientes criterios:
+
+1. Incremento significativo de usuarios o proyectos administrados.
+2. Necesidad de escalar componentes de manera independiente.
+3. Aparición de nuevos requerimientos de disponibilidad o rendimiento.
+4. Aumento de la complejidad de la sincronización y procesamiento de información.
+5. Necesidad de integrar nuevos sistemas o servicios externos.
+6. Cambios regulatorios o nuevos requerimientos de seguridad.
+7. Evidencia obtenida mediante métricas y monitoreo que justifique el cambio.
+
+De esta manera, la arquitectura puede evolucionar progresivamente sin abandonar los principios de simplicidad, separación de responsabilidades y diseño para el cambio establecidos para la solución.
+
+
+
+## 17. Glosario
+
+| Término | Definición |
+|---|---|
+| **API REST** | Interfaz que permite la comunicación entre los clientes de la plataforma y el backend mediante solicitudes HTTP siguiendo principios de REST. |
+| **ADR (Architecture Decision Record)** | Documento utilizado para registrar una decisión arquitectónica, sus alternativas, consecuencias y justificación. |
+| **Adapter** | Patrón de diseño que permite adaptar una interfaz a otra esperada por el sistema, aislando dependencias externas. |
+| **Backend** | Parte del sistema responsable de ejecutar la lógica de negocio, procesar solicitudes, aplicar reglas de seguridad y acceder a los mecanismos de persistencia. |
+| **CAP** | Principio que establece que un sistema distribuido debe considerar las propiedades de consistencia, disponibilidad y tolerancia a particiones al diseñar su comportamiento ante fallos de comunicación. |
+| **Consistencia eventual** | Modelo de consistencia en el que diferentes réplicas o clientes pueden presentar temporalmente información distinta, pero convergen hacia un estado consistente cuando se completa la sincronización. |
+| **CONFLICT** | Estado utilizado por el módulo de sincronización para identificar registros cuyos cambios no pueden integrarse automáticamente y requieren resolución posterior. |
+| **HTTPS** | Protocolo utilizado para establecer comunicación HTTP protegida mediante cifrado TLS. |
+| **JWT (JSON Web Token)** | Formato de token utilizado para transmitir información de autenticación entre el cliente y el servidor de forma estructurada y verificable. |
+| **Monolito modular** | Arquitectura en la que la aplicación se despliega como una unidad, pero internamente se organiza en módulos con responsabilidades y límites claramente definidos. |
+| **Offline** | Estado en el que un dispositivo no dispone de conectividad con el backend, pero puede continuar realizando determinadas operaciones mediante almacenamiento local. |
+| **PENDING** | Estado de un registro que ha sido almacenado localmente pero todavía no ha sido sincronizado correctamente con el backend. |
+| **PostgreSQL** | Sistema gestor de bases de datos relacional utilizado para almacenar la información estructurada y transaccional de la plataforma. |
+| **RBAC (Role-Based Access Control)** | Modelo de autorización en el que los permisos de acceso se asignan a roles y los usuarios reciben permisos según el rol que tienen asignado. |
+| **Repository** | Patrón que abstrae el acceso a los datos y separa la lógica de negocio de los mecanismos concretos de persistencia. |
+| **S3** | Interfaz y modelo de almacenamiento de objetos utilizado para almacenar archivos y evidencias, como fotografías, de forma separada de la base de datos transaccional. |
+| **SYNCED** | Estado que indica que un registro local fue enviado correctamente al backend y su sincronización fue confirmada. |
+| **Sincronización** | Proceso mediante el cual los registros almacenados localmente se envían al backend cuando vuelve a existir conectividad, permitiendo actualizar el estado de la información. |
+| **SyncStrategy** | Abstracción que permite definir diferentes estrategias para determinar cómo se procesan y resuelven situaciones durante la sincronización. |
+| **ManualConflictStrategy** | Estrategia de sincronización que mantiene los conflictos para que sean revisados y resueltos posteriormente en lugar de sobrescribir automáticamente la información. |
+| **Trazabilidad** | Capacidad de relacionar una operación o registro con su origen, usuario y estado para facilitar su seguimiento y auditoría. |
+| **Trade-off** | Compromiso entre dos o más atributos o características de diseño en el que favorecer una implica aceptar determinados costos o limitaciones en otra. |
+| **QS (Quality Scenario)** | Escenario de calidad utilizado para expresar de manera verificable una expectativa arquitectónica, como disponibilidad, consistencia, trazabilidad, seguridad o resiliencia. |
+
+
+## 18. Referencias
+
+Asamblea Legislativa de la República de Costa Rica. (2011, 7 de julio). Ley N.º 8968: Protección de la persona frente al tratamiento de sus datos personales. Sistema Costarricense de Información Jurídica. https://www.pgrweb.go.cr/scij/
+
+Brown, S. (2018). Software Architecture for Developers: Visualise, document and explore your software architecture. Leanpub..
+
+Fowler, M. (2015, 26 de agosto). MonolithFirst. MartinFowler.com. https://martinfowler.com/bliki/MonolithFirst.html.
+
+Gamma, E., Helm, R., Johnson, R., & Vlissides, J. (1994). Design Patterns: Elements of Reusable Object-Oriented Software. Addison-Wesley Professional.
+
+Internet Engineering Task Force (IETF). (2015). JSON Web Token (JWT) (RFC 7519). https://datatracker.ietf.org/doc/html/rfc7519.
+
+Richards, M., & Ford, N. (2020). Fundamentals of Software Architecture: An Engineering Approach. O'Reilly Media.
+
+Spring Framework Contributors. (2026). Spring Boot Reference Documentation. Spring. https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/
+
+The PostgreSQL Global Development Group. (2026). PostgreSQL Documentation. https://www.postgresql.org/docs/.

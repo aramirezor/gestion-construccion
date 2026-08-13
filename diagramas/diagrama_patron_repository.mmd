@@ -1,0 +1,17 @@
+classDiagram
+    class AvanceService {
+        +crearAvance(request) AvanceResponse
+    }
+    class AvanceRepository {
+        <<interface>>
+        +save(avance) Avance
+        +findById(id) Optional~Avance~
+    }
+    class SpringDataAvanceRepository {
+        +save(avance) Avance
+        +findById(id) Optional~Avance~
+    }
+    class PostgreSQL
+    AvanceService --> AvanceRepository
+    AvanceRepository <|.. SpringDataAvanceRepository
+    SpringDataAvanceRepository --> PostgreSQL

@@ -1,0 +1,22 @@
+sequenceDiagram
+    actor Encargado as Encargado de Obra
+    participant Mobile as Aplicación Móvil
+    participant Controller as AvanceController
+    participant Service as AvanceService
+    participant S3 as S3StorageService
+    participant Repo as AvanceRepository
+    participant DB as PostgreSQL
+
+    Encargado->>Mobile: Registrar avance y evidencias
+    Mobile->>Controller: POST /api/v1/avances
+    Controller->>Controller: Validar payload
+    Controller->>Service: crearAvance(request)
+    Service->>S3: upload(evidencia)
+    S3-->>Service: referencias de objetos
+    Service->>Repo: save(avance)
+    Repo->>DB: INSERT Avance
+    DB-->>Repo: Avance persistido
+    Repo-->>Service: Avance
+    Service-->>Controller: AvanceResponse
+    Controller-->>Mobile: 201 Created
+    Mobile-->>Encargado: Confirmación

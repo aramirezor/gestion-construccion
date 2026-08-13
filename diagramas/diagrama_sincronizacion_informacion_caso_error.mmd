@@ -1,0 +1,14 @@
+sequenceDiagram
+    participant Mobile as Aplicación Móvil
+    participant Sync as SyncService
+    participant Local as SyncRepository
+    participant API as API REST
+
+    Mobile->>Sync: syncPendingRecords()
+    Sync->>Local: findPending()
+    Local-->>Sync: registro pendiente
+    Sync->>API: POST /api/v1/sync
+    API-->>Sync: 409 Conflict
+    Sync->>Local: markConflict(localId)
+    Local-->>Sync: estado actualizado
+    Sync-->>Mobile: Conflicto pendiente

@@ -1,0 +1,51 @@
+classDiagram
+    class AuthController {
+        +login(LoginRequest request) ResponseEntity~TokenResponse~
+    }
+
+    class AuthService {
+        +authenticate(LoginRequest request) TokenResponse
+        +validateToken(String token) AuthenticatedUser
+    }
+
+    class JwtTokenService {
+        +generate(User user) String
+        +validate(String token) AuthenticatedUser
+    }
+
+    class AuthorizationService {
+        +hasPermission(AuthenticatedUser user, String resource, String action) boolean
+    }
+
+    class UserRepository {
+        <<interface>>
+        +findByUsername(String username) Optional~User~
+    }
+
+    class User {
+        -UUID id
+        -String username
+        -String passwordHash
+        -Role role
+        +getRole() Role
+    }
+
+    class Role {
+        <<enumeration>>
+        ADMINISTRADOR
+        ARQUITECTO
+        INGENIERO
+        ENCARGADO_OBRA
+    }
+
+    class JwtAuthenticationFilter {
+        +doFilter(Request request) void
+    }
+
+    AuthController --> AuthService : autentica
+    AuthService --> UserRepository : consulta usuario
+    AuthService --> JwtTokenService : genera/valida JWT
+    JwtAuthenticationFilter --> JwtTokenService : valida token
+    JwtAuthenticationFilter --> AuthorizationService : verifica permisos
+    UserRepository --> User : obtiene
+    User --> Role : tiene

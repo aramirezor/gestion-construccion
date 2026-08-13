@@ -1,0 +1,16 @@
+sequenceDiagram
+    actor Encargado as Encargado de Obra
+    participant Mobile as Aplicación Móvil
+    participant Controller as AvanceController
+    participant Service as AvanceService
+    participant DB as PostgreSQL
+
+    Encargado->>Mobile: Registrar avance
+    Mobile->>Controller: POST /api/v1/avances
+    Controller->>Controller: Validar payload
+    Controller->>Service: crearAvance(request)
+    Service->>DB: INSERT Avance
+    DB-->>Service: Error de conexión
+    Service-->>Controller: Service unavailable
+    Controller-->>Mobile: 503 Service Unavailable
+    Mobile->>Mobile: Mantener registro en cola local

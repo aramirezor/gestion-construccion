@@ -1,0 +1,51 @@
+classDiagram
+    class AvanceController {
+        +crearAvance(AvanceRequest request) ResponseEntity~AvanceResponse~
+        +validarRequest(AvanceRequest request) void
+    }
+
+    class AvanceService {
+        +crearAvance(AvanceRequest request) AvanceResponse
+        -validarProyecto(UUID proyectoId) void
+        -guardarEvidencias(List~File~ evidencias) List~String~
+    }
+
+    class AvanceRepository {
+        <<interface>>
+        +save(Avance avance) Avance
+        +findById(UUID id) Optional~Avance~
+    }
+
+    class S3StorageService {
+        +upload(File evidencia) String
+        +delete(String objectKey) void
+    }
+
+    class Avance {
+        -UUID id
+        -UUID proyectoId
+        -UUID usuarioId
+        -String descripcion
+        -BigDecimal porcentajeCompletado
+        -Instant fechaRegistro
+        -List~String~ evidencias
+        +getId() UUID
+        +getProyectoId() UUID
+        +getDescripcion() String
+    }
+
+    class AvanceRequest {
+        +UUID proyectoId
+        +UUID usuarioId
+        +String descripcion
+        +BigDecimal porcentajeCompletado
+        +Instant fechaRegistro
+        +List~File~ evidencias
+    }
+
+    AvanceController --> AvanceService : invoca
+    AvanceController --> AvanceRequest : recibe
+    AvanceService --> AvanceRepository : persiste
+    AvanceService --> S3StorageService : almacena evidencias
+    AvanceService --> Avance : crea
+    AvanceRepository --> Avance : almacena

@@ -1,0 +1,17 @@
+classDiagram
+    class SyncService {
+        +syncRecord(record) SyncStatus
+    }
+    class SyncStrategy {
+        <<interface>>
+        +resolve(local, server) ConflictResult
+    }
+    class ManualConflictStrategy {
+        +resolve(local, server) ConflictResult
+    }
+    class FutureConflictStrategy {
+        +resolve(local, server) ConflictResult
+    }
+    SyncService --> SyncStrategy
+    SyncStrategy <|.. ManualConflictStrategy
+    SyncStrategy <|.. FutureConflictStrategy

@@ -1,0 +1,46 @@
+flowchart TD
+
+%% Actor
+A[Encargado de Obra]
+
+%% Boundary
+B["Aplicación Móvil"]
+C["AvanceController<br/>API REST"]
+
+%% Control
+D["AvanceService"]
+
+%% Entity
+E["Validación de Datos"]
+F["Avance"]
+G["AvanceRepository"]
+H["PostgreSQL"]
+I["S3StorageService"]
+J["Amazon S3"]
+
+%% Flujo principal
+A --> B
+B -->|"POST /api/v1/avances"| C
+C --> D
+
+D --> E
+E -->|"Datos válidos"| F
+F --> G
+G --> H
+
+D --> I
+I --> J
+
+%% Respuesta
+H --> D
+J --> D
+D -->|"201 Created"| C
+C --> B
+B --> A
+
+%% Manejo de errores
+E -.->|"400 Bad Request"| C
+I -.->|"502 Bad Gateway"| C
+H -.->|"503 Service Unavailable"| C
+C -.->|"401 Unauthorized"| B
+C -.->|"403 Forbidden"| B
