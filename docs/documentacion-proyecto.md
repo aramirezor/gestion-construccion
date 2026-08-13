@@ -12,12 +12,12 @@ Maestría Profesional en Ingeniería del Software
 | Nombre del sistema | Plataforma de Gestión de Construcción |
 | :---- | :---- |
 | Grupo | Grupo 4 |
-| Integrantes |  Andrés José Ramírez Ortega<br>María José Hernández López<br>Braulio Rivera Espinoza<br>Valery Carvajal Oreamuno |
+| Integrantes |  Andrés José Ramírez Ortega<br>Braulio Rivera Espinoza<br>Valery Carvajal Oreamuno |
 | URL del repositorio | https://github.com/aramirezor/gestion-construccion.git |
 | Docente | Juan Mauricio Leandro |
 | Cuatrimestre | 2026 — II Cuatrimestre |
-| Versión del documento | 0.4 — Avance 1 |
-| Fecha de última actualización | 2026-06-28 |
+| Versión del documento | 0.5 — Avance 2 |
+| Fecha de última actualización | 2026-07-26 |
 
 San José, Costa Rica 2026
 
@@ -29,6 +29,7 @@ Control de Versiones
 | 0.2 | 2026-06-21 | Avance 1 (S07) | Incorporación de drivers arquitectónicos, requerimientos funcionales clave, atributos de calidad prioritarios, restricciones, escenarios de calidad, principios de diseño y vista de contexto. | Andrés José Ramírez Ortega María José Hernández López Braulio Rivera Espinoza Valery Carvajal Oreamuno |
 | 0.3 | 2026-06-28 | Avance 1 (S07) - Correcciones | Profundización del problema arquitectónico central (operación offline, política de conflictos y priorización de sincronización); ampliación de stakeholders (Cliente, Bodega, Proveedores); ajuste técnico de drivers arquitectónicos; redefinición de escenarios de calidad con métricas verificables y adición de escenario de resiliencia para fotografías; optimización de la vista de contexto. | Andrés José Ramírez Ortega María José Hernández López Braulio Rivera Espinoza Valery Carvajal Oreamuno |
 | 0.4 | 2026-06-28 | Avance 1 (S07) - Ajustes finales | Reestructuración del documento para mantener consistencia con el alcance del avance; fortalecimiento de la lógica y coherencia entre las secciones; refinamiento de la descripción del sistema, drivers arquitectónicos, escenarios de calidad y vista de contexto; eliminación de secciones no desarrolladas y corrección de numeración, formato y redacción general. | Andrés José Ramírez Ortega María José Hernández López Braulio Rivera Espinoza Valery Carvajal Oreamuno |
+| 0.5 | 2026-07-26 | Avance 2 (S11) | Incorporación de la vista de estructura interna y la vista de comportamiento; definición del estilo arquitectónico y análisis de sus trade-offs; documentación del registro de decisiones arquitectónicas (ADR); diseño detallado del componente de Registro de Avances (diagrama de clases, robustez y contrato de interfaz); revisión y actualización general del documento para mantener la consistencia entre las vistas, los escenarios de calidad y las decisiones de diseño. | Andrés José Ramírez Ortega María José Hernández López Braulio Rivera Espinoza Valery Carvajal Oreamuno |
 |  |  |  |  |  |
 
 # 
@@ -53,12 +54,36 @@ Control de Versiones
 4. Desafío Arquitectónico Principal
 
 5. Escenarios de Calidad
+
 6. Restricciones
 
 7. Principios de Diseño
 
 8. Vistas Arquitectónicas
-   - 8.1  Vista de contexto
+   - 8.1 Vista de contexto
+   - 8.2 Vista de estructura interna
+   - 8.3 Vista de comportamiento
+      - 8.3.1 Registro de avance de obra
+      - 8.3.2 Sincronización de información
+
+9. Estilo Arquitectónico
+   - 9.1 Estilo adoptado
+   - 9.2 Alternativas consideradas y rechazadas
+   - 9.3 Análisis de trade-offs del estilo elegido
+
+10. Registro de Decisiones Arquitectónicas (ADR)
+   - 10.1 ADR-001 – Adopción de una arquitectura monolítica modular
+   - 10.2 ADR-002 – Uso de API REST como mecanismo de comunicación entre clientes y backend
+   - 10.3 ADR-003 – Selección de PostgreSQL como motor de base de datos
+   - 10.4 ADR-004 – Uso de un servicio de almacenamiento de objetos para evidencias fotográficas
+   - 10.5 ADR-005 – Soporte para operación offline mediante sincronización diferida
+   - 10.6 ADR-006 – Autenticación basada en JWT y control de acceso por roles
+
+11. Diseño Detallado del Primer Componente: Registro de Avance de Obra
+   - 11.1 Secuencia del flujo principal
+   - 11.2 Diagrama de clases de diseño
+   - 11.3 Análisis de robustez
+   - 11.4 Contratos de interfaz documentados
 
 
 # 1\. Descripción del Sistema y Alcance
@@ -312,7 +337,7 @@ La resolución de este desafío constituye el principal eje arquitectónico del 
 | Diseño orientado a la resiliencia | Es fundamental debido a los escenarios de conectividad intermitente presentes en las obras de construcción. |
 
 
-## 8. Vistas arquitectónicas
+## 8\. Vistas arquitectónicas
 
 ### 8.1 Vista de contexto
 
@@ -328,3 +353,416 @@ La resolución de este desafío constituye el principal eje arquitectónico del 
 | Administrador de Proyecto | Persona / Rol | Monitorea costos, indicadores de desempeño, cronogramas y el estado general de múltiples proyectos. |
 | Servicio de Correo Electrónico | Sistema externo | Recibe solicitudes de envío de notificaciones y alertas generadas por la plataforma mediante SMTP o API. |
 | Almacenamiento de Archivos | Sistema externo | Almacena y proporciona acceso a fotografías y documentos asociados a actividades y avances de obra mediante HTTPS. |
+
+
+### 8.2 Vista de estructura interna
+
+Para representar la estructura interna de la Plataforma de Gestión de Construcción se utiliza la notación C4 de nivel 2. Esta notación permite identificar los principales contenedores que conforman la solución, sus responsabilidades y las relaciones de comunicación entre ellos, manteniendo un nivel de abstracción adecuado para comprender la arquitectura sin entrar en detalles de implementación.
+
+La vista facilita analizar cómo se distribuye la lógica del sistema entre las aplicaciones cliente, el backend y los mecanismos de persistencia, sirviendo como base para las decisiones arquitectónicas y los diagramas de comportamiento presentados en las secciones posteriores.
+
+
+**Figura 2. Vista de estructura interna de la Plataforma de Gestión de Construcción**
+![Diagrama - Vista de Estructura Interna](../diagramas/C4%20Modelo%20%E2%80%93%20Nivel%202.png)
+
+La Figura 2 presenta la estructura interna de la Plataforma de Gestión de Construcción mediante un diagrama C4 de nivel 2.
+
+La solución está conformada por cinco contenedores principales. La Aplicación Web proporciona la interfaz para las actividades administrativas y de gestión del proyecto, mientras que la Aplicación Móvil permite registrar información directamente desde la obra. Ambos clientes consumen los servicios expuestos por una API REST, la cual centraliza la lógica de negocio del sistema mediante módulos funcionales especializados.
+
+La información estructurada se almacena en una base de datos PostgreSQL, mientras que las fotografías y demás evidencias se gestionan mediante un Servicio de Almacenamiento de Objetos. Esta separación de responsabilidades favorece la mantenibilidad, escalabilidad y evolución del sistema.
+
+
+| Elemento | Tipo | Responsabilidad | Tecnología | Interfaces expuestas | Dependencias |
+|----------|------|-----------------|------------|----------------------|--------------|
+| Aplicación Web | Contenedor | Proporciona la interfaz para administradores de proyecto, arquitectos e ingenieros. Permite gestionar proyectos, cronogramas, tareas, inventario, compras y consultar reportes del sistema. | React | REST sobre HTTPS | API REST |
+| Aplicación Móvil | Contenedor | Permite registrar avances de obra, incidencias, consumo de materiales y evidencias fotográficas desde campo. Soporta operación con conectividad limitada mediante sincronización posterior. | Flutter | REST sobre HTTPS | API REST |
+| API REST | Contenedor | Centraliza la lógica de negocio del sistema. Gestiona autenticación, autorización, proyectos, cronogramas, inventario, compras, reportes y la persistencia de la información. | Spring Boot (Java 21) | Endpoints REST (`/api/v1/*`) | PostgreSQL y Servicio de Almacenamiento de Objetos |
+| Base de Datos | Base de datos | Almacena la información persistente del sistema: usuarios, proyectos, tareas, cronogramas, inventario, compras y registros históricos. | PostgreSQL | JDBC | API REST |
+| Servicio de Almacenamiento de Objetos | Sistema externo | Almacena fotografías y documentos asociados a los proyectos. La base de datos conserva únicamente las referencias a dichos archivos. | Compatible con S3 | HTTPS | API REST |
+
+### 8.3 Vista de comportamiento
+
+#### 8.3.1 Registro de avance de obra
+
+Para representar el comportamiento dinámico de la Plataforma de Gestión de Construcción se utilizan diagramas de secuencia UML, ya que permiten visualizar el intercambio de mensajes entre los principales contenedores del sistema durante la ejecución de casos de uso relevantes.
+
+Esta notación facilita comprender el flujo de información, la coordinación entre los diferentes componentes y la forma en que la arquitectura responde a los escenarios de calidad definidos, particularmente aquellos relacionados con la disponibilidad, la consistencia y la trazabilidad.
+
+**Figura 3. Diagrama de secuencia del registro de avance de obra**
+
+![Diagrama de secuencia del registro de avance de obra](../diagramas/Diagrama%20de%20secuencia%20comportamiento.png)
+
+El flujo inicia cuando el encargado de obra registra un avance desde la aplicación móvil. La información es enviada a la API REST, donde se validan los datos y se almacena el avance en la base de datos.
+
+Posteriormente, las evidencias fotográficas son enviadas al servicio de almacenamiento de objetos y sus referencias quedan asociadas al registro correspondiente.
+
+Finalmente, la API confirma el registro exitoso a la aplicación móvil, garantizando la trazabilidad de la información y la correcta asociación entre los datos y las evidencias.
+
+Escenarios de calidad validados:
+
+| Escenario | Cómo se valida |
+|------------|----------------|
+| Trazabilidad | Cada avance queda asociado a un proyecto y a sus evidencias fotográficas. |
+| Consistencia | El avance y las referencias a las fotografías se almacenan de forma controlada por la API REST. |
+| Seguridad | Toda la comunicación entre la aplicación móvil y la API se realiza mediante HTTPS y usuarios autenticados. |
+
+
+#### 8.3.2 Sincronización de información
+
+La sincronización de información es un proceso fundamental para garantizar la continuidad de las operaciones en escenarios donde la conectividad es limitada o intermitente.
+
+Durante el trabajo en campo, la aplicación móvil permite registrar información de manera local y, una vez restablecida la conexión a Internet, sincroniza los cambios con el servidor para mantener la consistencia de la información almacenada en el sistema.
+
+**Figura 4. Diagrama de secuencia de la sincronización de información**
+![Diagrama de secuencia de sincronización de información](../diagramas/Diagrama%20de%20Secuencia%20sincronizacion.png)
+
+El proceso inicia cuando la aplicación móvil detecta que la conectividad ha sido restablecida.
+
+Los registros almacenados localmente son enviados a la API REST, donde se valida la autenticación del usuario y la integridad de la información recibida.
+
+Posteriormente, la API registra o actualiza los datos correspondientes en la base de datos y devuelve una confirmación a la aplicación móvil, la cual marca los registros como sincronizados.
+
+Este mecanismo permite mantener la consistencia de la información sin interrumpir el trabajo realizado en campo.
+
+Escenarios de calidad validados:
+
+| Escenario | Cómo se valida |
+|------------|----------------|
+| Disponibilidad | La aplicación móvil continúa operando aun cuando no existe conexión a Internet y sincroniza la información cuando esta se restablece. |
+| Consistencia | La API REST valida y procesa todos los cambios antes de persistirlos en la base de datos, evitando inconsistencias en la información. |
+| Confiabilidad | La aplicación solo marca los registros como sincronizados después de recibir la confirmación de que los datos fueron almacenados correctamente. |
+
+
+
+
+
+## 9\. Estilo arquitectónico
+La Plataforma de Gestión de Construcción adopta una arquitectura monolítica modular, organizada en capas de presentación, lógica de negocio y persistencia. Este estilo permite mantener una separación clara de responsabilidades, facilita el mantenimiento del sistema y reduce la complejidad de desarrollo y despliegue, siendo una solución adecuada para el tamaño del proyecto y los requerimientos funcionales y de calidad definidos.
+
+
+### 9.1 Estilo adoptado
+
+| Estilo | Aplicación en el sistema | Justificación |
+|--------|---------------------------|---------------|
+| **Arquitectura Monolítica Modular** | La aplicación está compuesta por un único backend desarrollado en Spring Boot que organiza la lógica del negocio en módulos como autenticación, proyectos, inventario, compras, cronogramas y reportes. Las aplicaciones web y móvil consumen los servicios expuestos mediante una API REST común. | Este estilo responde adecuadamente a los requerimientos del sistema al reducir la complejidad arquitectónica, facilitar el mantenimiento y permitir una evolución gradual de los módulos funcionales. Además, favorece la consistencia de la información, simplifica el despliegue y resulta apropiado para un equipo de desarrollo pequeño y un volumen de usuarios moderado. |
+
+
+### 9.2 Alternativas consideradas y rechazadas
+
+Durante el diseño de la arquitectura se evaluaron diferentes estilos arquitectónicos con el objetivo de seleccionar la alternativa que mejor respondiera a los requerimientos funcionales y a los escenarios de calidad definidos para la Plataforma de Gestión de Construcción.
+
+A continuación, se presentan las principales alternativas consideradas y las razones por las cuales fueron descartadas.
+
+| Alternativa | Por qué se consideró | Por qué se rechazó |
+|-------------|----------------------|--------------------|
+| **Arquitectura de Microservicios** | Permite desplegar servicios de manera independiente, facilita el escalamiento de funcionalidades específicas y favorece la autonomía de los módulos del sistema. | Incrementa significativamente la complejidad de desarrollo, despliegue y monitoreo. Para el tamaño del proyecto, el equipo de desarrollo y el volumen esperado de usuarios, sus beneficios no compensan el costo adicional de implementación y mantenimiento. |
+| **Arquitectura Hexagonal** | Favorece el desacoplamiento entre la lógica de negocio y las tecnologías externas, mejorando la mantenibilidad y la capacidad de realizar pruebas unitarias. | Introduce una complejidad estructural mayor que la requerida para este proyecto. Los beneficios obtenidos no justifican el esfuerzo adicional considerando el alcance funcional y el tamaño del sistema. |
+
+### 9.3 Análisis de trade-offs del estilo elegido
+
+Toda decisión arquitectónica implica beneficios y compromisos. La adopción de una arquitectura monolítica modular responde a las necesidades actuales de la Plataforma de Gestión de Construcción; sin embargo, también implica ciertas limitaciones que fueron aceptadas considerando el alcance del proyecto, el tamaño del equipo de desarrollo y los escenarios de calidad priorizados.
+
+| Trade-off | Beneficio obtenido | Compromiso asumido | Escenario(s) relacionado(s) |
+|-----------|--------------------|--------------------|-----------------------------|
+| **Arquitectura monolítica modular** | Simplifica el desarrollo, las pruebas, el despliegue y el mantenimiento al centralizar la lógica de negocio en una única aplicación. | El escalamiento se realiza sobre toda la aplicación y no por módulos individuales, lo que puede incrementar el consumo de recursos conforme el sistema crece. | QA-05 (Mantenibilidad), QA-06 (Escalabilidad) |
+| **API REST centralizada** | Centraliza las reglas de negocio y las validaciones, garantizando un comportamiento uniforme para las aplicaciones web y móvil. | La disponibilidad de ambos clientes depende del correcto funcionamiento de la API REST. | QS-01 (Disponibilidad), QS-02 (Consistencia) |
+| **Almacenamiento externo de fotografías** | Reduce el tamaño de la base de datos y facilita la gestión de archivos multimedia de gran tamaño. | Introduce dependencia de un servicio adicional para almacenar y recuperar las evidencias fotográficas. | QS-05 (Resiliencia en la sincronización de fotografías), QS-03 (Trazabilidad) |
+| **Separación entre base de datos y almacenamiento de objetos** | Permite almacenar únicamente las referencias a los archivos en la base de datos, mejorando la organización de la información. | Requiere mantener la consistencia entre los registros de la base de datos y los archivos almacenados externamente. | QS-02 (Consistencia), QS-03 (Trazabilidad) |
+
+## 10. Registro de Decisiones Arquitectónicas (ADR)
+
+### 10.1 ADR-001 – Adopción de una arquitectura monolítica modular
+
+| Campo | Detalle |
+| :--- | :--- |
+| **Estado** | Aceptada |
+| **Fecha** | 2026-07-26 |
+| **Autores** | Andrés José Ramírez Ortega, Braulio Rivera Espinoza y Valery Carvajal Oreamuno |
+
+**Contexto**
+La Plataforma de Gestión de Construcción debe soportar la gestión de proyectos, materiales, cronogramas, compras, avances de obra y evidencias fotográficas mediante una aplicación web y una aplicación móvil. Además, el sistema debe operar en entornos con conectividad limitada, manteniendo la consistencia de la información y facilitando su evolución conforme aumenten las funcionalidades del proyecto. 
+Durante el diseño arquitectónico fue necesario seleccionar un estilo que equilibrara simplicidad, mantenibilidad y capacidad de crecimiento, considerando el tamaño del equipo de desarrollo, el alcance funcional del sistema y los escenarios de calidad definidos para el proyecto.
+
+**Decisión**
+Se decidió adoptar una arquitectura monolítica modular, organizada en capas de presentación, lógica de negocio y persistencia. La lógica de negocio se divide en módulos funcionales independientes (por ejemplo, autenticación, proyectos, inventario, compras, cronogramas y reportes), todos desplegados como una única aplicación backend.
+Esta arquitectura permite mantener una separación clara de responsabilidades sin introducir la complejidad operativa asociada a una arquitectura distribuida.
+
+**Alternativas consideradas**
+
+| Alternativa | Ventajas | Desventajas | Por qué se descartó |
+| :--- | :--- | :--- | :--- |
+| **Arquitectura de Microservicios** | Escalamiento independiente, despliegues desacoplados y mayor aislamiento entre servicios. | Mayor complejidad en comunicación, despliegue, monitoreo y administración de infraestructura. | El tamaño del proyecto y el volumen esperado de usuarios no justifican el incremento de complejidad operativa. |
+| **Arquitectura Hexagonal (Ports and Adapters)** | Favorece el desacoplamiento de la lógica de negocio y mejora la capacidad de realizar pruebas unitarias. | Requiere una estructura de software más compleja y un mayor esfuerzo de implementación. | Los beneficios obtenidos no compensan la complejidad adicional para el alcance actual del sistema. |
+
+**Consecuencias positivas**
+* Simplifica el desarrollo y el despliegue de la solución al mantener un único backend.
+* Facilita el mantenimiento mediante la organización del sistema en módulos funcionales.
+* Reduce la complejidad operativa y administrativa en comparación con arquitecturas distribuidas.
+* Favorece la consistencia de la lógica de negocio al centralizar las reglas del sistema.
+* Responde adecuadamente a los escenarios de disponibilidad y consistencia definidos para el proyecto.
+
+**Consecuencias negativas**
+* El escalamiento se realiza sobre la aplicación completa y no sobre módulos individuales.
+* Un fallo crítico en el backend puede afectar a todas las funcionalidades del sistema.
+* La evolución hacia una arquitectura distribuida requerirá una refactorización importante si el sistema crece considerablemente.
+
+**Revisión requerida si**
+Esta decisión deberá revisarse si el crecimiento del sistema hace necesario escalar funcionalidades específicas de manera independiente, si aumenta considerablemente el número de usuarios concurrentes o si la complejidad del dominio justifica la migración hacia una arquitectura distribuida basada en microservicios.
+
+### 10.2 ADR-002 – Uso de API REST como mecanismo de comunicación entre clientes y backend
+
+| Campo | Detalle |
+| :--- | :--- |
+| **Estado** | Aceptada |
+| **Fecha** | 2026-07-26 |
+| **Autores** | Andrés José Ramírez Ortega, Braulio Rivera Espinoza y Valery Carvajal Oreamuno |
+
+**Contexto**
+La plataforma será utilizada tanto desde una aplicación web como desde una aplicación móvil. Ambas interfaces deben acceder a la misma información y ejecutar las mismas reglas de negocio, garantizando consistencia en las operaciones y evitando la duplicación de lógica entre clientes.
+Además, el sistema debe permitir la sincronización de información registrada en campo cuando la conectividad sea limitada o intermitente, por lo que se requiere un mecanismo de comunicación estándar, interoperable y ampliamente soportado.
+
+**Decisión**
+Se decidió implementar una API REST como mecanismo de comunicación entre los clientes (aplicación web y aplicación móvil) y el backend del sistema.
+La API será responsable de centralizar la lógica de negocio, validar las solicitudes recibidas, gestionar el acceso a los recursos del sistema y servir como punto único de integración para todos los clientes.
+
+**Alternativas consideradas**
+
+| Alternativa | Ventajas | Desventajas | Por qué se descartó |
+| :--- | :--- | :--- | :--- |
+| **GraphQL** | Permite solicitar únicamente la información necesaria y reduce el número de peticiones en algunos escenarios. | Requiere una mayor complejidad en el diseño del esquema, la implementación y la gestión de consultas. | Los casos de uso del sistema se adaptan adecuadamente a una API REST, por lo que la complejidad adicional de GraphQL no aporta beneficios significativos. |
+| **gRPC** | Alta eficiencia en la comunicación entre servicios y mejor rendimiento en escenarios de alto volumen. | Está orientado principalmente a la comunicación entre servicios y presenta menor facilidad de integración con clientes web y móviles. | La prioridad del proyecto es facilitar la interoperabilidad entre diferentes clientes mediante un protocolo ampliamente adoptado en aplicaciones empresariales. |
+
+**Consecuencias positivas**
+* Centraliza las reglas de negocio y evita la duplicación de lógica entre clientes.
+* Facilita el desarrollo independiente de la aplicación web y la aplicación móvil.
+* Permite reutilizar los mismos servicios para futuras integraciones.
+* Utiliza estándares ampliamente adoptados, facilitando el mantenimiento y la evolución del sistema.
+* Favorece la consistencia de la información al procesar todas las operaciones desde un único punto de acceso.
+
+**Consecuencias negativas**
+* La API constituye un punto central cuya indisponibilidad afecta a todos los clientes.
+* Puede incrementar el número de solicitudes HTTP en operaciones que requieren múltiples recursos.
+* Requiere implementar mecanismos adecuados de autenticación, autorización y control de errores para garantizar la seguridad y disponibilidad del servicio.
+
+**Revisión requerida si**
+Esta decisión deberá revisarse si surgen nuevos requerimientos de integración que demanden un mecanismo de comunicación más eficiente o flexible, si el volumen de intercambio de datos crece significativamente o si aparecen casos de uso donde REST deje de satisfacer adecuadamente las necesidades de rendimiento o consumo de datos.
+
+### 10.3 ADR-003 – Selección de PostgreSQL como motor de base de datos
+
+| Campo | Detalle |
+| :--- | :--- |
+| **Estado** | Aceptada |
+| **Fecha** | 2026-07-26 |
+| **Autores** | Andrés José Ramírez Ortega, Braulio Rivera Espinoza y Valery Carvajal Oreamuno |
+
+**Contexto**
+La Plataforma de Gestión de Construcción debe almacenar información estructurada relacionada con proyectos, cronogramas, materiales, compras, usuarios, evidencias y registros de auditoría. Esta información presenta múltiples relaciones entre entidades y requiere mantener la integridad y consistencia de los datos, incluso cuando los registros son sincronizados desde dispositivos móviles que operan sin conexión.
+Por ello, fue necesario seleccionar un motor de base de datos que garantizara confiabilidad, soporte para transacciones y facilidad de mantenimiento.
+
+**Decisión**
+Se decidió utilizar PostgreSQL como motor de base de datos principal del sistema.
+PostgreSQL proporciona un modelo relacional robusto, soporte para transacciones ACID, mecanismos avanzados de integridad referencial y un excelente rendimiento para aplicaciones empresariales con datos altamente relacionados. Estas características lo convierten en una alternativa adecuada para los requerimientos funcionales y los escenarios de calidad definidos para el proyecto.
+
+**Alternativas consideradas**
+
+| Alternativa | Ventajas | Desventajas | Por qué se descartó |
+| :--- | :--- | :--- | :--- |
+| **MySQL** | Amplia adopción, facilidad de administración y buen rendimiento para aplicaciones web tradicionales. | Ofrece menor flexibilidad en algunas funcionalidades avanzadas y menor capacidad de extensión respecto a PostgreSQL. | PostgreSQL proporciona un conjunto más amplio de características orientadas a aplicaciones empresariales y manejo de relaciones complejas. |
+| **MongoDB** | Alta flexibilidad para almacenar información no estructurada y facilidad para escalar horizontalmente. | No resulta ideal para un dominio con múltiples relaciones e integridad referencial estricta. | La naturaleza relacional del sistema hace más apropiado el uso de una base de datos relacional que garantice consistencia transaccional. |
+
+**Consecuencias positivas**
+* Garantiza la integridad y consistencia de la información mediante transacciones ACID.
+* Facilita el modelado de relaciones entre proyectos, usuarios, materiales y cronogramas.
+* Proporciona un alto nivel de confiabilidad para operaciones críticas del negocio.
+* Permite escalar el sistema manteniendo un modelo de datos estructurado y consistente.
+
+**Consecuencias negativas**
+* El esquema relacional requiere una planificación más cuidadosa que una base de datos NoSQL.
+* Cambios importantes en el modelo de datos pueden requerir migraciones de esquema.
+* El escalamiento horizontal suele ser más complejo que en algunas soluciones NoSQL.
+
+**Revisión requerida si**
+Esta decisión deberá revisarse si el modelo de datos evoluciona hacia estructuras predominantemente no relacionales, si los requerimientos de escalabilidad horizontal superan las capacidades del motor seleccionado o si aparecen necesidades de almacenamiento que no puedan resolverse eficientemente mediante un modelo relacional.
+
+### 10.4 ADR-004 – Uso de un servicio de almacenamiento de objetos para evidencias fotográficas
+
+| Campo | Detalle |
+| :--- | :--- |
+| **Estado** | Aceptada |
+| **Fecha** | 2026-07-26 |
+| **Autores** | Andrés José Ramírez Ortega, Braulio Rivera Espinoza y Valery Carvajal Oreamuno |
+
+**Contexto**
+La Plataforma de Gestión de Construcción permite registrar evidencias fotográficas como respaldo del avance de las actividades realizadas en obra. Estas imágenes pueden representar una cantidad considerable de datos y deben estar disponibles para consulta desde las aplicaciones web y móvil.
+Durante el diseño de la arquitectura fue necesario definir un mecanismo de almacenamiento que permitiera gestionar archivos multimedia de forma eficiente, evitando afectar el rendimiento de la base de datos utilizada para almacenar la información transaccional.
+
+**Decisión**
+Se decidió almacenar las evidencias fotográficas en un servicio de almacenamiento de objetos, utilizando Amazon S3 como tecnología propuesta para la implementación. La base de datos únicamente almacenará la información descriptiva de cada evidencia y la referencia al archivo correspondiente.
+Esta separación permite optimizar el almacenamiento de datos, mejorar el rendimiento del sistema y facilitar la administración de archivos multimedia.
+
+**Alternativas consideradas**
+
+| Alternativa | Ventajas | Desventajas | Por qué se descartó |
+| :--- | :--- | :--- | :--- |
+| **Almacenar imágenes directamente en PostgreSQL (BLOB)** | Centraliza toda la información en un único sistema y simplifica algunas operaciones de respaldo. | Incrementa significativamente el tamaño de la base de datos y puede afectar el rendimiento de consultas y respaldos. | No resulta adecuado para manejar grandes volúmenes de archivos multimedia ni favorece la escalabilidad del sistema. |
+| **Sistema de archivos local del servidor** | Implementación sencilla y bajo costo inicial. | Dificulta la escalabilidad, la alta disponibilidad y la administración de archivos en entornos distribuidos. | Limita la evolución de la arquitectura y genera dependencia del servidor donde se ejecuta la aplicación. |
+
+**Consecuencias positivas**
+* Reduce el tamaño y la carga de la base de datos.
+* Mejora el rendimiento de las operaciones transaccionales.
+* Facilita la administración y recuperación de archivos multimedia.
+* Permite escalar el almacenamiento de manera independiente del resto del sistema.
+* Favorece la disponibilidad y durabilidad de las evidencias fotográficas.
+
+**Consecuencias negativas**
+* Introduce dependencia de un servicio adicional para almacenar y recuperar archivos.
+* Requiere mantener la consistencia entre los registros de la base de datos y los objetos almacenados.
+* Incrementa la complejidad de la gestión de permisos y control de acceso sobre los archivos.
+
+**Revisión requerida si**
+Esta decisión deberá revisarse si el volumen de archivos multimedia disminuye significativamente, si aparecen requerimientos que obliguen a almacenar toda la información en un único repositorio o si el servicio de almacenamiento de objetos deja de satisfacer los requisitos de costo, disponibilidad o rendimiento del sistema.
+
+### 10.5 ADR-005 – Soporte para operación offline mediante sincronización diferida
+
+| Campo | Detalle |
+| :--- | :--- |
+| **Estado** | Aceptada |
+| **Fecha** | 2026-07-26 |
+| **Autores** | Andrés José Ramírez Ortega, Braulio Rivera Espinoza y Valery Carvajal Oreamuno |
+
+**Contexto**
+La Plataforma de Gestión de Construcción será utilizada en obras donde la conectividad a Internet puede ser limitada o intermitente. Los encargados de obra deben poder registrar avances, materiales utilizados, incidencias y evidencias fotográficas sin depender de una conexión permanente.
+Debido a este escenario, la arquitectura debe garantizar la continuidad de la operación y asegurar que la información registrada en campo sea sincronizada con el servidor una vez que la conectividad sea restablecida.
+
+**Decisión**
+Se decidió implementar un mecanismo de operación offline con sincronización diferida.
+La aplicación móvil almacenará temporalmente la información generada por el usuario en un repositorio local cuando no exista conectividad. Una vez restablecida la conexión, los registros pendientes serán sincronizados con la API REST, la cual validará y persistirá la información en la base de datos, garantizando la integridad y consistencia de los datos.
+
+**Alternativas consideradas**
+
+| Alternativa | Ventajas | Desventajas | Por qué se descartó |
+| :--- | :--- | :--- | :--- |
+| **Operación exclusivamente en línea** | Arquitectura más simple y sincronización inmediata de la información. | Impide registrar datos cuando no existe conexión, afectando directamente la continuidad de las operaciones en campo. | No satisface los requerimientos del proyecto ni los escenarios de calidad relacionados con disponibilidad y resiliencia. |
+| **Sincronización en tiempo real mediante conexión permanente** | Los datos permanecen siempre actualizados entre clientes y servidor. | Depende completamente de una conexión estable y aumenta el consumo de red y batería en dispositivos móviles. | No resulta viable para el contexto operativo de obras con conectividad intermitente. |
+
+**Consecuencias positivas**
+* Permite continuar las operaciones aun cuando no exista conexión a Internet.
+* Reduce el riesgo de pérdida de información durante el trabajo en campo.
+* Mejora la experiencia de los usuarios al no depender de la disponibilidad de la red.
+* Contribuye al cumplimiento de los escenarios de disponibilidad, consistencia y resiliencia definidos para el proyecto.
+
+**Consecuencias negativas**
+* Incrementa la complejidad de la aplicación móvil al incorporar lógica de almacenamiento local y sincronización.
+* Requiere mecanismos para detectar y resolver posibles conflictos durante la sincronización.
+* Es necesario gestionar el estado de los registros pendientes y controlar la integridad de la información sincronizada.
+
+**Revisión requerida si**
+Esta decisión deberá revisarse si las condiciones operativas cambian y todos los usuarios disponen de conectividad estable y permanente, o si se incorporan nuevos requerimientos que demanden sincronización en tiempo real con garantías de consistencia inmediata.
+
+### 10.6 ADR-006 – Autenticación basada en JWT y control de acceso por roles
+
+| Campo | Detalle |
+| :--- | :--- |
+| **Estado** | Aceptada |
+| **Fecha** | 2026-07-26 |
+| **Autores** | Andrés José Ramírez Ortega, Braulio Rivera Espinoza y Valery Carvajal Oreamuno |
+
+**Contexto**
+La Plataforma de Gestión de Construcción será utilizada por distintos tipos de usuarios, entre ellos administradores, arquitectos, ingenieros, encargados de obra y personal administrativo. Cada uno requiere diferentes niveles de acceso a la información y funcionalidades del sistema.
+Además, la plataforma expone una API REST consumida por aplicaciones web y móviles, por lo que es necesario establecer un mecanismo de autenticación seguro, escalable y adecuado para clientes distribuidos.
+
+**Decisión**
+Se decidió implementar un mecanismo de autenticación basado en JSON Web Tokens (JWT) y un esquema de autorización basado en roles (RBAC).
+Una vez autenticado el usuario, el sistema emitirá un token JWT que será utilizado para validar las solicitudes realizadas a la API REST. La autorización se realizará verificando los permisos asociados al rol del usuario antes de permitir el acceso a cada recurso o funcionalidad.
+
+**Alternativas consideradas**
+
+| Alternativa | Ventajas | Desventajas | Por qué se descartó |
+| :--- | :--- | :--- | :--- |
+| **Autenticación basada en sesiones** | Implementación sencilla para aplicaciones web tradicionales y control centralizado de las sesiones activas. | Requiere mantener estado en el servidor y dificulta la integración con aplicaciones móviles y arquitecturas distribuidas. | La plataforma incluye clientes web y móviles, por lo que se buscó una solución desacoplada y sin estado. |
+| **API Keys** | Implementación simple y bajo costo de administración para integraciones entre sistemas. | No permite identificar adecuadamente usuarios individuales ni gestionar permisos detallados según el rol. | No satisface los requerimientos de autenticación y autorización para usuarios con distintos perfiles de acceso. |
+
+**Consecuencias positivas**
+* Permite un mecanismo de autenticación sin estado, adecuado para una API REST.
+* Facilita la integración de múltiples clientes utilizando el mismo esquema de autenticación.
+* Mejora la seguridad al restringir el acceso a los recursos según el rol del usuario.
+* Simplifica la escalabilidad del backend al no requerir almacenamiento de sesiones.
+
+**Consecuencias negativas**
+* Requiere una gestión adecuada del ciclo de vida de los tokens (expiración, renovación y revocación).
+* La información contenida en el token debe protegerse mediante el uso de HTTPS y almacenamiento seguro en los clientes.
+* Incrementa la complejidad de la implementación al incorporar mecanismos de autenticación y autorización.
+
+**Revisión requerida si**
+Esta decisión deberá revisarse si se incorporan nuevos requerimientos de autenticación, como integración con proveedores de identidad externos (por ejemplo, OAuth 2.0 u OpenID Connect), autenticación multifactor (MFA) o mecanismos de autorización más granulares que los proporcionados por un esquema basado únicamente en roles.
+
+## 11. Primer Componente: Registro de Avance de Obra
+
+### 11.1 Secuencia del flujo principal
+
+![Diagrama de flujo Avance de Obra](../diagramas/diagrama_flujo_Avance_de_Obra.png)
+
+El Registro de Avance de Obra es el subsistema encargado de recolectar las actualizaciones diarias o semanales reportadas por los encargados en campo y sincronizarlas con la plataforma principal. El comportamiento dinámico de este componente ya se encuentra documentado en la sección **8.3.1 Registro de avance de obra**. El flujo establece que la aplicación móvil envía los datos a la API REST, el backend coordina la subida de fotografías al servicio de almacenamiento (Amazon S3), guarda la información transaccional en PostgreSQL y retorna la confirmación al cliente.
+
+### 11.2 Diagrama de clases de diseño
+
+![Diagrama de clases Avance de Obra](../diagramas/diagrama_clase_Avance_de_Obra.png)
+
+El siguiente diagrama de clases ilustra la estructura interna del backend (Spring Boot) para el módulo de avances, aplicando el patrón de diseño MVC y la separación por capas (Controlador, Servicio y Repositorio).
+
+**Figura 5. Diagrama de clases de diseño**
+
+**Descripción de las clases principales:**
+*   **AvanceController:** Punto de entrada de la API REST. Se encarga de recibir las peticiones HTTP, validar la estructura básica del payload (anotaciones de validación) y retornar los códigos de estado HTTP correspondientes.
+*   **AvanceService:** Contiene la lógica de negocio. Orquesta la subida de imágenes a S3 y el guardado en la base de datos de manera transaccional.
+*   **S3StorageService:** Servicio adaptador encargado de la comunicación directa con el API de Amazon S3.
+*   **AvanceRepository:** Interfaz basada en Spring Data JPA para la persistencia en PostgreSQL.
+*   **Avance (Entity):** Representa el modelo de dominio y la tabla en la base de datos relacional.
+
+### 11.3 Análisis de robustez
+
+Para garantizar la fiabilidad del sistema frente a fallos (particularmente por las restricciones de red y servicios externos), el componente implementa los siguientes mecanismos de manejo de excepciones:
+
+1.  **Fallo en la conexión a la base de datos (PostgreSQL):**
+    *   Si la base de datos no está disponible al momento de guardar el `Avance`, la capa de servicio capturará la excepción interna. El backend responderá con un código HTTP `503 Service Unavailable`. La aplicación móvil (cliente) detectará este error y mantendrá el registro en su cola local para reintentar la sincronización más tarde.
+2.  **Fallo en la subida de evidencias a Amazon S3:**
+    *   Si el servicio de almacenamiento externo falla por timeout o credenciales inválidas, el método transaccional de Spring Boot (`@Transactional`) realizará un *rollback* automático. Esto evita que quede guardado un avance en la base de datos sin sus fotografías correspondientes, manteniendo la consistencia (Escenario QS-02). El cliente recibirá un HTTP `502 Bad Gateway`.
+3.  **Datos de entrada inválidos (Payload incorrecto):**
+    *   Si la petición enviada desde el móvil no incluye campos obligatorios (ej. `proyectoId` o `descripcion`), el `AvanceController` rechazará la petición inmediatamente (ej. mediante `MethodArgumentNotValidException`), retornando un HTTP `400 Bad Request` sin llegar a consumir recursos de base de datos ni almacenamiento.
+
+### 11.4 Contratos de interfaz documentados
+
+A continuación, se detalla el contrato de la API REST (Endpoint) que consume la aplicación móvil para registrar un avance.
+
+*   **Endpoint:** `POST /api/v1/avances`
+*   **Descripción:** Permite a un usuario autenticado registrar un nuevo avance de obra asociando evidencias fotográficas.
+*   **Headers requeridos:**
+    *   `Authorization: Bearer <JWT_TOKEN>`
+    *   `Content-Type: application/json`
+
+**Request Body (JSON):**
+
+```json
+{
+  "proyectoId": "550e8400-e29b-41d4-a716-446655440000",
+  "usuarioId": "123e4567-e89b-12d3-a456-426614174000",
+  "descripcion": "Fundición de losas del segundo nivel sector A.",
+  "porcentajeCompletado": 15.5,
+  "fechaRegistro": "2026-07-28T14:30:00Z",
+  "evidenciasBase64": [
+    "iVBORw0KGgoAAAANSUhEUgAA...", 
+    "R0lGODlhAQABAIAAAAAAAP..."
+  ]
+}
+```
+*(Nota: Para optimizar la sincronización diferida, las imágenes se envían codificadas en Base64 en el payload o mediante una arquitectura multipart/form-data según la configuración del cliente).*
+
+**Respuestas esperadas:**
+
+| Código HTTP | Significado | Estructura del Response (Ejemplo) |
+| :--- | :--- | :--- |
+| **201 Created** | Avance registrado y evidencias subidas exitosamente. | `{ "mensaje": "Avance registrado con éxito", "avanceId": "uuid" }` |
+| **400 Bad Request** | Faltan campos obligatorios o formatos incorrectos. | `{ "error": "BAD_REQUEST", "detalles": ["descripcion es requerida"] }` |
+| **401 Unauthorized** | El token JWT no existe, está mal formado o ha expirado. | `{ "error": "UNAUTHORIZED", "mensaje": "Token inválido o expirado" }` |
+| **403 Forbidden** | El usuario autenticado no tiene el rol necesario en este proyecto. | `{ "error": "FORBIDDEN", "mensaje": "No tiene permisos en este proyecto" }` |
+| **500 / 503** | Error interno del servidor o pérdida de conexión con PostgreSQL/S3. | `{ "error": "SERVICE_UNAVAILABLE", "mensaje": "Error temporal guardando el registro" }` |

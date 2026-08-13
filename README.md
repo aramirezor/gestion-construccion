@@ -17,7 +17,6 @@
 | Integrante                 | Usuario GitHub |
 | -------------------------- | -------------- |
 | Andrés José Ramírez Ortega | @aramirezor    |
-| María José Hernández López | @mhernandezlo  |
 | Braulio Rivera Espinoza    | @brauliore     |
 | Valery Carvajal Oreamuno   | @valcarvajal   |
 
